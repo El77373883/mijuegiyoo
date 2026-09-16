@@ -23,11 +23,11 @@
   html,body{margin:0;padding:0;height:100%;background:var(--void);overflow:hidden;font-family:'Rajdhani',sans-serif;}
   #app{position:relative;width:100%;height:100vh;max-height:100dvh;overflow:hidden;color:var(--bone);}
 
-  .bg-layer{position:absolute;inset:0;z-index:0;transition:background 0.4s ease;background-size:cover;background-position:center;}
+  .bg-layer{position:absolute;inset:0;z-index:0;}
   .bg-layer::after{
     content:"";position:absolute;inset:0;
-    background:radial-gradient(ellipse at 50% 15%, rgba(255,90,31,0.12), transparent 55%),
-               linear-gradient(180deg, rgba(11,9,8,0.15) 0%, rgba(11,9,8,0.35) 55%, rgba(11,9,8,0.9) 100%);
+    background:radial-gradient(ellipse at 50% 15%, rgba(255,90,31,0.16), transparent 55%),
+               linear-gradient(180deg, rgba(11,9,8,0.35) 0%, rgba(11,9,8,0.55) 55%, rgba(11,9,8,0.96) 100%);
   }
   .bg-embers{position:absolute;inset:0;z-index:1;pointer-events:none;overflow:hidden;}
   .ember-particle{position:absolute;bottom:-10px;width:3px;height:3px;border-radius:50%;
@@ -39,51 +39,89 @@
     100%{transform:translateY(-100vh) translateX(var(--drift,20px));opacity:0;}
   }
 
-  /* ---------- TOP BAR (BANNER DEL PERFIL) ---------- */
+  /* ---------- TOP BAR ---------- */
   .topbar{
     position:absolute;top:0;left:0;right:0;z-index:5;
     display:flex;align-items:center;justify-content:space-between;
-    padding:14px 16px 20px;
+    padding:10px 14px;
+    height:88px;
     background-size:cover;
-    background-position:center 35%;
+    background-position:center 40%;
     transition:background 0.4s ease;
-    border-bottom-left-radius:20px;
-    border-bottom-right-radius:20px;
+    border-bottom:2px solid var(--molten);
     overflow:hidden;
-    box-shadow:0 6px 18px rgba(0,0,0,0.35);
+    box-shadow:0 6px 20px rgba(0,0,0,0.6);
   }
   .topbar::before{
     content:"";
     position:absolute;inset:0;
-    background:linear-gradient(180deg, rgba(11,9,8,0.55) 0%, rgba(11,9,8,0.15) 60%, transparent 100%);
+    background:linear-gradient(90deg, rgba(11,9,8,0.75) 0%, rgba(11,9,8,0.25) 35%, rgba(11,9,8,0.35) 70%, rgba(11,9,8,0.75) 100%);
     pointer-events:none;
   }
   .topbar::after{
     content:"";
     position:absolute;left:0;right:0;bottom:0;height:2px;
     background:linear-gradient(90deg, transparent, var(--molten), transparent);
-    opacity:0.6;
+    opacity:0.8;
   }
   .topbar > *{position:relative;z-index:1;}
 
-  .profile-btn{display:flex;align-items:center;gap:8px;background:rgba(28,21,18,0.75);border:1.5px solid var(--line);
-    border-radius:40px;padding:4px 14px 4px 4px;backdrop-filter:blur(6px);}
-  .avatar-ring{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;
-    border:2px solid var(--molten);box-shadow:0 0 10px rgba(255,176,32,0.5);flex-shrink:0;overflow:hidden;background:var(--panel-2);}
+  .profile-btn{display:flex;align-items:center;gap:10px;background:none;border:none;padding:0;}
+  .avatar-frame{position:relative;width:62px;height:62px;flex-shrink:0;}
+  .avatar-frame .frame-bg{
+    position:absolute;inset:0;border-radius:10px;
+    background:linear-gradient(135deg, #FFB020 0%, #FF5A1F 45%, #7A1421 100%);
+    padding:3px;
+    box-shadow:0 0 10px rgba(255,176,32,0.6), inset 0 0 6px rgba(0,0,0,0.5);
+  }
+  .avatar-ring{
+    position:absolute;inset:3px;border-radius:8px;overflow:hidden;
+    background:var(--panel-2);display:flex;align-items:center;justify-content:center;
+  }
   .avatar-ring svg{width:100%;height:100%;}
-  .profile-label{display:flex;flex-direction:column;line-height:1.1;}
-  .profile-name{font-weight:700;font-size:13px;letter-spacing:0.5px;}
-  .profile-sub{font-size:10.5px;color:var(--bone-dim);font-weight:600;}
 
-  .coin-pill{display:flex;align-items:center;gap:6px;background:rgba(28,21,18,0.75);border:1.5px solid var(--line);
-    border-radius:40px;padding:6px 14px;backdrop-filter:blur(6px);}
+  .level-badge{
+    position:absolute;bottom:-4px;left:-4px;
+    background:linear-gradient(180deg,#FFB020,#FF5A1F);
+    color:#2a1a00;font-family:'Anton',sans-serif;font-size:11px;
+    padding:2px 7px;border-radius:6px;
+    border:1.5px solid #0B0908;
+    box-shadow:0 2px 6px rgba(0,0,0,0.5);
+    letter-spacing:0.5px;
+  }
+
+  .profile-label{display:flex;flex-direction:column;line-height:1.1;gap:2px;}
+  .profile-name{
+    font-family:'Anton',sans-serif;font-size:17px;letter-spacing:1px;
+    color:var(--bone);
+    text-shadow:0 2px 4px rgba(0,0,0,0.9), 0 0 12px rgba(255,176,32,0.35);
+  }
+  .profile-sub{
+    font-size:10.5px;color:var(--molten);font-weight:700;
+    letter-spacing:1.5px;text-transform:uppercase;
+    text-shadow:0 1px 3px rgba(0,0,0,0.8);
+  }
+
+  .rank-emblem{
+    width:52px;height:52px;flex-shrink:0;
+    display:flex;align-items:center;justify-content:center;
+    filter:drop-shadow(0 0 8px rgba(255,90,31,0.6));
+  }
+
+  .coin-pill{
+    position:absolute;top:96px;right:14px;z-index:6;
+    display:flex;align-items:center;gap:6px;
+    background:rgba(28,21,18,0.85);border:1.5px solid var(--molten);
+    border-radius:40px;padding:6px 14px;backdrop-filter:blur(6px);
+    box-shadow:0 4px 12px rgba(0,0,0,0.5);
+  }
   .coin-icon{width:16px;height:16px;border-radius:50%;background:radial-gradient(circle at 30% 30%, var(--molten), var(--ember) 70%);
     box-shadow:0 0 6px rgba(255,176,32,0.6);flex-shrink:0;}
-  .coin-num{font-weight:700;font-size:14px;}
+  .coin-num{font-weight:700;font-size:14px;color:var(--bone);}
 
   /* ---------- LOBBY CENTER ---------- */
   .lobby-screen{position:absolute;inset:0;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;}
-  .rank-tag{position:absolute;top:96px;left:0;right:0;text-align:center;}
+  .rank-tag{position:absolute;top:104px;left:0;right:0;text-align:center;}
   .rank-tag span{font-family:'Anton',sans-serif;font-size:11px;letter-spacing:3px;color:var(--molten);opacity:0.9;
     text-shadow:0 1px 6px rgba(0,0,0,0.7);}
 
@@ -93,7 +131,7 @@
   @keyframes pulse{0%,100%{transform:scale(1);opacity:0.7;}50%{transform:scale(1.12);opacity:1;}}
   .player-figure{position:relative;z-index:2;width:150px;filter:drop-shadow(0 8px 18px rgba(0,0,0,0.6));}
 
-  .title-mark{position:absolute;top:140px;left:0;right:0;text-align:center;pointer-events:none;}
+  .title-mark{position:absolute;top:150px;left:0;right:0;text-align:center;pointer-events:none;}
   .title-mark h1{font-family:'Anton',sans-serif;font-size:30px;letter-spacing:3px;margin:0;
     background:linear-gradient(180deg, var(--bone) 0%, var(--molten) 60%, var(--ember) 100%);
     -webkit-background-clip:text;background-clip:text;color:transparent;
@@ -121,7 +159,7 @@
     text-shadow:0 2px 3px rgba(0,0,0,0.35);}
   .players-count{font-size:10.5px;color:var(--bone-dim);font-weight:700;letter-spacing:1px;}
 
-  /* ---------- PANELS (Profile / Shop / Inventory) ---------- */
+  /* ---------- PANELS ---------- */
   .panel{position:absolute;inset:0;z-index:20;background:linear-gradient(180deg, var(--void-2), var(--void) 60%);
     transform:translateY(100%);transition:transform .32s cubic-bezier(.22,.9,.3,1);display:flex;flex-direction:column;}
   .panel.open{transform:translateY(0);}
@@ -179,23 +217,35 @@
   <div class="bg-layer" id="bgLayer"></div>
   <div class="bg-embers" id="embers"></div>
 
-  <!-- LOBBY -->
   <div class="lobby-screen">
     <div class="topbar" id="topbar">
       <button class="profile-btn" id="openProfile">
-        <span class="avatar-ring" id="topAvatar"></span>
+        <span class="avatar-frame">
+          <span class="frame-bg"></span>
+          <span class="avatar-ring" id="topAvatar"></span>
+          <span class="level-badge">42</span>
+        </span>
         <span class="profile-label">
           <span class="profile-name">ADRIAN_MX</span>
-          <span class="profile-sub">Nv. 42</span>
+          <span class="profile-sub">Llama de Bronce</span>
         </span>
       </button>
-      <div class="coin-pill">
-        <span class="coin-icon"></span>
-        <span class="coin-num" id="coinDisplay">0</span>
+
+      <div class="rank-emblem">
+        <svg viewBox="0 0 64 64">
+          <path d="M32 6l6 8 10-2-2 10 8 6-8 6 2 10-10-2-6 8-6-8-10 2 2-10-8-6 8-6-2-10 10 2z"
+                fill="#7A1421" stroke="#FFB020" stroke-width="2" stroke-linejoin="round"/>
+          <path d="M32 18l4 6 7-1-1 7 5 4-5 4 1 7-7-1-4 6-4-6-7 1 1-7-5-4 5-4-1-7 7 1z"
+                fill="#FF5A1F"/>
+          <circle cx="32" cy="32" r="5" fill="#FFB020"/>
+        </svg>
       </div>
     </div>
 
-    <div class="rank-tag"><span>RANGO · LLAMA DE BRONCE</span></div>
+    <div class="coin-pill">
+      <span class="coin-icon"></span>
+      <span class="coin-num" id="coinDisplay">0</span>
+    </div>
 
     <div class="player-stage">
       <div class="title-mark">
@@ -230,16 +280,15 @@
     </div>
   </div>
 
-  <!-- PROFILE PANEL -->
   <div class="panel" id="profilePanel">
     <div class="panel-header">
       <span class="panel-title">MI <span class="accent">PERFIL</span></span>
       <button class="close-btn" data-close="profilePanel">✕</button>
     </div>
     <div class="panel-body">
-      <div class="section-label">ÍCONO</div>
+      <div class="section-label">AVATAR</div>
       <div class="grid" id="profileIconGrid"></div>
-      <div class="section-label">FONDO DE PERFIL</div>
+      <div class="section-label">BANNER DEL PERFIL</div>
       <div class="grid bgs" id="profileBgGrid"></div>
     </div>
     <div class="save-bar">
@@ -247,7 +296,6 @@
     </div>
   </div>
 
-  <!-- SHOP PANEL -->
   <div class="panel" id="shopPanel">
     <div class="panel-header">
       <span class="panel-title">TIENDA <span class="accent">DE FUEGO</span></span>
@@ -255,23 +303,22 @@
     </div>
     <div class="panel-body">
       <span class="season-badge"><span>TEMPORADA 1 · COLECCIÓN FUEGO</span></span>
-      <div class="section-label">ÍCONOS</div>
+      <div class="section-label">AVATARES</div>
       <div class="grid" id="shopIconGrid"></div>
-      <div class="section-label">FONDOS</div>
+      <div class="section-label">BANNERS DE FUEGO</div>
       <div class="grid bgs" id="shopBgGrid"></div>
     </div>
   </div>
 
-  <!-- INVENTORY PANEL -->
   <div class="panel" id="inventoryPanel">
     <div class="panel-header">
       <span class="panel-title">MI <span class="accent">INVENTARIO</span></span>
       <button class="close-btn" data-close="inventoryPanel">✕</button>
     </div>
     <div class="panel-body">
-      <div class="section-label">ÍCONOS OBTENIDOS</div>
+      <div class="section-label">AVATARES OBTENIDOS</div>
       <div class="grid" id="invIconGrid"></div>
-      <div class="section-label">FONDOS OBTENIDOS</div>
+      <div class="section-label">BANNERS OBTENIDOS</div>
       <div class="grid bgs" id="invBgGrid"></div>
     </div>
   </div>
@@ -280,43 +327,75 @@
 </div>
 
 <script>
-/* ============ ORIGINAL ART: FIRE-THEMED ICONS & BACKGROUNDS (Season 1) ============ */
-
+/* ============ AVATARES ============ */
 const ICONS = [
   { id:'ic_default', name:'Llama Base', price:0,
     svg:`<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="32" fill="#241B17"/><path d="M32 12c6 8-4 10-4 18a8 8 0 0 0 16 0c0-4-2-6-2-6 4 2 6 8 6 12 0 8.8-7.2 16-16 16s-16-7.2-16-16C16 26 24 20 32 12z" fill="#FF5A1F"/><path d="M32 24c2 4-2 6-2 10a4 4 0 0 0 8 0c0-2-1-3-1-3 2 1 3 4 3 6 0 4.4-3.6 8-8 8s-8-3.6-8-8c0-6 4-9 8-13z" fill="#FFB020"/></svg>` },
-  { id:'ic_skull', name:'Cráneo Cenizo', price:250,
-    svg:`<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="32" fill="#1C1512"/><ellipse cx="32" cy="30" rx="14" ry="13" fill="#EDE1D3"/><rect x="24" y="38" width="16" height="8" rx="2" fill="#EDE1D3"/><circle cx="26" cy="28" r="4" fill="#1C1512"/><circle cx="38" cy="28" r="4" fill="#1C1512"/><path d="M30 34l2 4 2-4" stroke="#1C1512" stroke-width="2" fill="none"/><path d="M18 18c4-8 24-8 28 0" stroke="#FF5A1F" stroke-width="3" fill="none" stroke-linecap="round"/></svg>` },
-  { id:'ic_wolf', name:'Lobo del Ocaso', price:320,
-    svg:`<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="32" fill="#241B17"/><path d="M18 40l4-16 6 6h8l6-6 4 16-6-4-8 6-8-6z" fill="#3A2E27"/><path d="M18 40l4-16 6 6h8l6-6 4 16-6-4-8 6-8-6z" fill="none" stroke="#FFB020" stroke-width="1.5"/><circle cx="26" cy="30" r="2.4" fill="#FF5A1F"/><circle cx="38" cy="30" r="2.4" fill="#FF5A1F"/></svg>` },
-  { id:'ic_phoenix', name:'Fénix Naciente', price:480,
-    svg:`<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="32" fill="#1C1512"/><path d="M32 10c10 6 6 14 14 18-6 0-8-2-8-2 6 6 4 14-2 18 2-6-2-8-2-8 0 8-8 12-8 12s-8-4-8-12c0 0-4 2-2 8-6-4-8-12-2-18 0 0-2 2-8 2 8-4 4-12 14-18z" fill="url(#pg)"/><defs><linearGradient id="pg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFB020"/><stop offset="1" stop-color="#FF5A1F"/></linearGradient></defs></svg>` },
-  { id:'ic_mask', name:'Máscara Carbón', price:210,
-    svg:`<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="32" fill="#241B17"/><path d="M14 26c6-8 30-8 36 0-2 12-8 22-18 22s-16-10-18-22z" fill="#0B0908"/><path d="M22 28l6 4-6 4M42 28l-6 4 6 4" stroke="#FF5A1F" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg>` },
-  { id:'ic_ember_eye', name:'Ojo de Ascua', price:380,
-    svg:`<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="32" fill="#1C1512"/><path d="M10 32c8-10 36-10 44 0-8 10-36 10-44 0z" fill="#3A2E27"/><circle cx="32" cy="32" r="9" fill="#FF5A1F"/><circle cx="32" cy="32" r="4" fill="#FFB020"/></svg>` },
-  { id:'ic_crown', name:'Corona en Llamas', price:600,
-    svg:`<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="32" fill="#241B17"/><path d="M16 40l4-16 8 8 4-12 4 12 8-8 4 16z" fill="#FFB020"/><path d="M16 40h32v6H16z" fill="#FF5A1F"/></svg>` },
-  { id:'ic_rune', name:'Runa Ígnea', price:150,
-    svg:`<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="32" fill="#1C1512"/><path d="M32 14v36M20 22l24 20M44 22L20 42" stroke="#FF5A1F" stroke-width="3" stroke-linecap="round"/><circle cx="32" cy="32" r="5" fill="#FFB020"/></svg>` },
-  { id:'ic_dragon', name:'Ojo de Dragón', price:700,
-    svg:`<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="32" fill="#0B0908"/><path d="M8 32c10-14 38-14 48 0-10 14-38 14-48 0z" fill="#7A1421"/><ellipse cx="32" cy="32" rx="8" ry="12" fill="#FFB020"/><rect x="30" y="22" width="4" height="20" rx="2" fill="#0B0908"/></svg>` },
+  { id:'ic_skull_gold', name:'Calavera Dorada', price:300,
+    svg:`<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="32" fill="#1a1408"/><ellipse cx="32" cy="30" rx="14" ry="13" fill="#FFB020"/><rect x="24" y="38" width="16" height="8" rx="2" fill="#FFB020"/><circle cx="26" cy="28" r="4" fill="#1a1408"/><circle cx="38" cy="28" r="4" fill="#1a1408"/><path d="M30 34l2 4 2-4" stroke="#1a1408" stroke-width="2" fill="none"/><path d="M18 18c4-8 24-8 28 0" stroke="#FF5A1F" stroke-width="3" fill="none" stroke-linecap="round"/></svg>` },
+  { id:'ic_tiger', name:'Tigre Salvaje', price:400,
+    svg:`<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="32" fill="#1C1512"/><ellipse cx="32" cy="34" rx="16" ry="14" fill="#FFB020"/><path d="M18 20l4 8-2 2M46 20l-4 8 2 2" stroke="#FFB020" stroke-width="3" stroke-linecap="round"/><path d="M24 28l4 2M40 28l-4 2M26 36h4M34 36h4" stroke="#0B0908" stroke-width="2" stroke-linecap="round"/><ellipse cx="32" cy="42" rx="3" ry="2" fill="#0B0908"/><circle cx="26" cy="32" r="2" fill="#0B0908"/><circle cx="38" cy="32" r="2" fill="#0B0908"/></svg>` },
+  { id:'ic_oni', name:'Máscara Oni', price:450,
+    svg:`<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="32" fill="#1a0606"/><path d="M14 24c4-10 32-10 36 0-2 16-8 26-18 26s-16-10-18-26z" fill="#7A1421"/><path d="M18 18l4-8 4 6M46 18l-4-8-4 6" stroke="#FFB020" stroke-width="3" fill="none" stroke-linecap="round"/><circle cx="24" cy="30" r="3" fill="#FFB020"/><circle cx="40" cy="30" r="3" fill="#FFB020"/><path d="M24 42l4-3 4 3 4-3 4 3" stroke="#FFB020" stroke-width="2" fill="none"/></svg>` },
+  { id:'ic_wolf_white', name:'Lobo Blanco', price:500,
+    svg:`<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="32" fill="#0e1a24"/><path d="M18 44l4-20 6 6h8l6-6 4 20-6-4-8 6-8-6z" fill="#EDE1D3"/><path d="M18 44l4-20 6 6h8l6-6 4 20-6-4-8 6-8-6z" fill="none" stroke="#6aa8d8" stroke-width="1.5"/><circle cx="26" cy="32" r="2.4" fill="#3a8ad8"/><circle cx="38" cy="32" r="2.4" fill="#3a8ad8"/><path d="M28 40l4 4 4-4" stroke="#3a8ad8" stroke-width="2" fill="none"/></svg>` },
+  { id:'ic_phoenix_gold', name:'Fénix Dorado', price:600,
+    svg:`<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="32" fill="#1a0e02"/><path d="M32 8c12 8 8 16 16 22-8 0-10-3-10-3 8 8 4 18-2 22 2-8-3-10-3-10 0 10-9 15-9 15s-9-5-9-15c0 0-5 2-3 10-6-4-10-14-2-22 0 0-2 3-10 3 8-6 4-14 16-22z" fill="url(#fg)"/><defs><linearGradient id="fg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFF3A0"/><stop offset="0.5" stop-color="#FFB020"/><stop offset="1" stop-color="#FF5A1F"/></linearGradient></defs></svg>` },
+  { id:'ic_crown_royal', name:'Corona Real', price:700,
+    svg:`<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="32" fill="#1a1004"/><path d="M14 42l4-22 8 8 6-14 6 14 8-8 4 22z" fill="url(#cr)"/><path d="M14 42h36v6H14z" fill="#7A1421"/><circle cx="32" cy="20" r="3" fill="#FF5A1F"/><circle cx="20" cy="24" r="2.5" fill="#FF5A1F"/><circle cx="44" cy="24" r="2.5" fill="#FF5A1F"/><defs><linearGradient id="cr" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFF3A0"/><stop offset="1" stop-color="#FFB020"/></linearGradient></defs></svg>` },
+  { id:'ic_rune_purple', name:'Runa Púrpura', price:200,
+    svg:`<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="32" fill="#150a1f"/><path d="M32 12v40M18 20l28 24M46 20L18 44" stroke="#a855f7" stroke-width="3" stroke-linecap="round"/><circle cx="32" cy="32" r="6" fill="#e9d5ff"/></svg>` },
+  { id:'ic_dragon_blue', name:'Dragón Azul', price:750,
+    svg:`<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="32" fill="#020a1a"/><path d="M8 32c10-14 38-14 48 0-10 14-38 14-48 0z" fill="#1e40af"/><ellipse cx="32" cy="32" rx="8" ry="12" fill="#60a5fa"/><rect x="30" y="22" width="4" height="20" rx="2" fill="#0B0908"/></svg>` },
+  { id:'ic_ghost', name:'Fantasma', price:350,
+    svg:`<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="32" fill="#0e1418"/><path d="M18 46V30a14 14 0 0 1 28 0v16l-4-4-4 4-4-4-4 4-4-4-4 4z" fill="#EDE1D3"/><circle cx="26" cy="30" r="3" fill="#0B0908"/><circle cx="38" cy="30" r="3" fill="#0B0908"/><ellipse cx="32" cy="38" rx="3" ry="4" fill="#0B0908"/></svg>` },
 ];
 
+/* ============ BANNERS DE FUEGO Y FONDOS MODERNOS ============ */
 const BACKGROUNDS = [
-  { id:'bg_default', name:'Brasas', price:0, css:'radial-gradient(ellipse at 50% 30%, #3a2016 0%, #14100d 70%)' },
-  { id:'bg_volcano', name:'Cráter Activo', price:300, css:'linear-gradient(180deg,#1a0f0a 0%,#5c1c0e 55%,#ff6a1a 100%)' },
-  { id:'bg_ashfall', name:'Lluvia de Ceniza', price:260, css:'radial-gradient(circle at 30% 20%, #4a2a1a, #0b0908 75%)' },
-  { id:'bg_bloodmoon', name:'Luna Carmesí', price:420, css:'linear-gradient(160deg,#1a0a0a 0%,#7a1421 60%,#2c0a0a 100%)' },
-  { id:'bg_wildfire', name:'Incendio Salvaje', price:380, css:'linear-gradient(120deg,#0b0908 0%,#8a2a0e 45%,#ffb020 100%)' },
-  { id:'bg_obsidian', name:'Obsidiana', price:340, css:'linear-gradient(200deg,#0a0a0a 0%,#241b17 50%,#3a1010 100%)' },
-  { id:'bg_infernal', name:'Núcleo Infernal', price:650, css:'radial-gradient(circle at 50% 60%, #ffb020 0%, #ff5a1f 35%, #2a0a05 75%)' },
-  { id:'bg_scorched', name:'Tierra Quemada', price:220, css:'linear-gradient(180deg,#2a1f18 0%,#120d0a 100%)' },
+  { id:'bg_default', name:'Brasas', price:0,
+    css:'radial-gradient(ellipse at 50% 30%, #3a2016 0%, #14100d 70%)' },
+
+  /* --- BANNERS DE FUEGO DE COLORES --- */
+  { id:'bg_flame_blue', name:'Llamas Azules', price:400,
+    css:'radial-gradient(ellipse at 50% 80%, #1e40af 0%, #0c1a4a 40%, #02030a 75%)' },
+  { id:'bg_flame_purple', name:'Llamas Moradas', price:450,
+    css:'radial-gradient(ellipse at 50% 80%, #7c3aed 0%, #3b0764 45%, #0a0212 78%)' },
+  { id:'bg_flame_yellow', name:'Llamas Amarillas', price:420,
+    css:'radial-gradient(ellipse at 50% 80%, #fde047 0%, #b45309 45%, #1a0e02 78%)' },
+  { id:'bg_flame_green', name:'Infierno Verde', price:480,
+    css:'radial-gradient(ellipse at 50% 80%, #22c55e 0%, #064e3b 45%, #02120a 78%)' },
+  { id:'bg_flame_pink', name:'Llamas Rosas', price:460,
+    css:'radial-gradient(ellipse at 50% 80%, #ec4899 0%, #831843 45%, #170210 78%)' },
+  { id:'bg_flame_white', name:'Fuego Blanco', price:550,
+    css:'radial-gradient(ellipse at 50% 80%, #fef3c7 0%, #f59e0b 35%, #7c2d12 65%, #0a0503 90%)' },
+
+  /* --- FONDOS MODERNOS / COLORIDOS --- */
+  { id:'bg_cyber_neon', name:'Ciudad Neón', price:500,
+    css:'linear-gradient(135deg, #0f0c29 0%, #302b63 45%, #ff00cc 100%)' },
+  { id:'bg_synthwave', name:'Atardecer Synth', price:520,
+    css:'linear-gradient(180deg, #2b0a3d 0%, #ff2e63 50%, #ffb020 100%)' },
+  { id:'bg_electric', name:'Tormenta Eléctrica', price:480,
+    css:'linear-gradient(160deg, #0a0a1f 0%, #1e3a8a 40%, #60a5fa 75%, #dbeafe 100%)' },
+  { id:'bg_crystal', name:'Arena de Cristal', price:560,
+    css:'linear-gradient(140deg, #0e7490 0%, #22d3ee 45%, #f0fdff 100%)' },
+  { id:'bg_gold_desert', name:'Desierto Dorado', price:440,
+    css:'linear-gradient(180deg, #1a0e02 0%, #b45309 45%, #fcd34d 100%)' },
+  { id:'bg_aurora', name:'Aurora Boreal', price:600,
+    css:'linear-gradient(135deg, #02121f 0%, #14b8a6 40%, #a855f7 70%, #f472b6 100%)' },
+  { id:'bg_void_purple', name:'Vacío Púrpura', price:580,
+    css:'radial-gradient(circle at 50% 40%, #a855f7 0%, #4c1d95 35%, #0a0212 80%)' },
+  { id:'bg_deep_magma', name:'Magma Profundo', price:520,
+    css:'radial-gradient(circle at 50% 90%, #fde047 0%, #dc2626 30%, #450a0a 65%, #0a0202 100%)' },
+  { id:'bg_emerald_void', name:'Abismo Esmeralda', price:540,
+    css:'radial-gradient(circle at 50% 50%, #10b981 0%, #064e3b 40%, #02120a 80%)' },
+  { id:'bg_sakura', name:'Sakura Nocturna', price:580,
+    css:'linear-gradient(180deg, #1a0218 0%, #831843 45%, #fbcfe8 100%)' },
 ];
 
 /* ============ STATE ============ */
 let state = {
-  coins: 1200,
+  coins: 5000,
   equippedIcon: 'ic_default',
   equippedBg: 'bg_default',
   ownedIcons: ['ic_default'],
@@ -351,23 +430,16 @@ function findIcon(id){ return ICONS.find(i=>i.id===id) || ICONS[0]; }
 function findBg(id){ return BACKGROUNDS.find(b=>b.id===id) || BACKGROUNDS[0]; }
 
 function applyEquipped(){
-  const bgCss = findBg(state.equippedBg).css;
+  document.getElementById('topbar').style.background = findBg(state.equippedBg).css;
   document.getElementById('topAvatar').innerHTML = findIcon(state.equippedIcon).svg;
-  document.getElementById('bgLayer').style.background = bgCss;
-  document.getElementById('topbar').style.background = bgCss;
   document.getElementById('coinDisplay').textContent = state.coins.toLocaleString('es-MX');
 }
 
-/* Preview en vivo mientras eliges en el perfil (sin guardar todavía) */
 function previewBg(bgId){
-  const bgCss = findBg(bgId).css;
-  document.getElementById('bgLayer').style.background = bgCss;
-  document.getElementById('topbar').style.background = bgCss;
+  document.getElementById('topbar').style.background = findBg(bgId).css;
 }
 function revertPreview(){
-  const bgCss = findBg(state.equippedBg).css;
-  document.getElementById('bgLayer').style.background = bgCss;
-  document.getElementById('topbar').style.background = bgCss;
+  document.getElementById('topbar').style.background = findBg(state.equippedBg).css;
 }
 
 function buildPlayerFigure(){
@@ -404,7 +476,6 @@ function itemCard({item, type, owned, equipped, mode}){
   return card;
 }
 
-/* ---------- PROFILE PANEL RENDER ---------- */
 function renderProfilePanel(){
   const iconGrid = document.getElementById('profileIconGrid');
   const bgGrid = document.getElementById('profileBgGrid');
@@ -416,7 +487,7 @@ function renderProfilePanel(){
     if(owned){
       card.addEventListener('click', ()=>{
         draftIcon = item.id;
-        document.getElementById('topAvatar').innerHTML = findIcon(draftIcon).svg; // preview en vivo del ícono
+        document.getElementById('topAvatar').innerHTML = findIcon(draftIcon).svg;
         renderProfilePanel();
       });
     }
@@ -429,7 +500,7 @@ function renderProfilePanel(){
     if(owned){
       card.addEventListener('click', ()=>{
         draftBg = item.id;
-        previewBg(draftBg); // 👈 preview en vivo del fondo en lobby + topbar
+        previewBg(draftBg);
         renderProfilePanel();
       });
     }
@@ -437,7 +508,6 @@ function renderProfilePanel(){
   });
 }
 
-/* ---------- SHOP PANEL RENDER ---------- */
 function renderShopPanel(){
   const iconGrid = document.getElementById('shopIconGrid');
   const bgGrid = document.getElementById('shopBgGrid');
@@ -446,18 +516,14 @@ function renderShopPanel(){
   ICONS.forEach(item=>{
     const owned = state.ownedIcons.includes(item.id);
     const card = itemCard({item, type:'icon', owned, equipped:false, mode:'shop'});
-    if(!owned){
-      card.addEventListener('click', ()=> buyItem(item, 'icon'));
-    }
+    if(!owned) card.addEventListener('click', ()=> buyItem(item, 'icon'));
     iconGrid.appendChild(card);
   });
 
   BACKGROUNDS.forEach(item=>{
     const owned = state.ownedBgs.includes(item.id);
     const card = itemCard({item, type:'bg', owned, equipped:false, mode:'shop'});
-    if(!owned){
-      card.addEventListener('click', ()=> buyItem(item, 'bg'));
-    }
+    if(!owned) card.addEventListener('click', ()=> buyItem(item, 'bg'));
     bgGrid.appendChild(card);
   });
 }
@@ -474,10 +540,10 @@ function buyItem(item, type){
   applyEquipped();
   renderShopPanel();
   renderProfilePanel();
+  renderInventoryPanel();
   showToast(`${item.name} desbloqueado`);
 }
 
-/* ---------- INVENTORY PANEL RENDER ---------- */
 function renderInventoryPanel(){
   const iconGrid = document.getElementById('invIconGrid');
   const bgGrid = document.getElementById('invBgGrid');
@@ -486,21 +552,12 @@ function renderInventoryPanel(){
   const ownedIcons = ICONS.filter(i=>state.ownedIcons.includes(i.id));
   const ownedBgs = BACKGROUNDS.filter(b=>state.ownedBgs.includes(b.id));
 
-  if(ownedIcons.length===0){
-    iconGrid.innerHTML = '<div class="empty-state">Aún no tienes íconos. Visita la tienda.</div>';
-  }else{
-    ownedIcons.forEach(item=>{
-      iconGrid.appendChild(itemCard({item, type:'icon', owned:true, equipped: state.equippedIcon===item.id, mode:'inventory'}));
-    });
-  }
-
-  if(ownedBgs.length===0){
-    bgGrid.innerHTML = '<div class="empty-state">Aún no tienes fondos. Visita la tienda.</div>';
-  }else{
-    ownedBgs.forEach(item=>{
-      bgGrid.appendChild(itemCard({item, type:'bg', owned:true, equipped: state.equippedBg===item.id, mode:'inventory'}));
-    });
-  }
+  ownedIcons.forEach(item=>{
+    iconGrid.appendChild(itemCard({item, type:'icon', owned:true, equipped: state.equippedIcon===item.id, mode:'inventory'}));
+  });
+  ownedBgs.forEach(item=>{
+    bgGrid.appendChild(itemCard({item, type:'bg', owned:true, equipped: state.equippedBg===item.id, mode:'inventory'}));
+  });
 }
 
 function renderAll(){
@@ -511,7 +568,7 @@ function renderAll(){
   renderInventoryPanel();
 }
 
-/* ============ PANEL NAVIGATION ============ */
+/* ============ NAV ============ */
 function openPanel(id){
   if(id==='profilePanel'){ draftIcon = state.equippedIcon; draftBg = state.equippedBg; renderProfilePanel(); }
   if(id==='shopPanel'){ renderShopPanel(); }
@@ -527,7 +584,6 @@ document.getElementById('openInventory').addEventListener('click', ()=> openPane
 document.querySelectorAll('[data-close]').forEach(btn=>{
   btn.addEventListener('click', ()=>{
     if(btn.dataset.close === 'profilePanel'){
-      // Si cierra sin guardar, revierte el preview
       draftIcon = state.equippedIcon;
       draftBg = state.equippedBg;
       revertPreview();
@@ -550,7 +606,6 @@ document.getElementById('playBtn').addEventListener('click', ()=>{
   showToast('Buscando partida...');
 });
 
-/* ============ TOAST ============ */
 let toastTimer;
 function showToast(msg){
   const t = document.getElementById('toast');
@@ -560,7 +615,6 @@ function showToast(msg){
   toastTimer = setTimeout(()=> t.classList.remove('show'), 1800);
 }
 
-/* ============ EMBER PARTICLES ============ */
 function spawnEmbers(){
   const container = document.getElementById('embers');
   for(let i=0;i<22;i++){
