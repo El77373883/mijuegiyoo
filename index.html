@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>INFERNO ROYALE</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --void:#0B0908;
+    --void-2:#151110;
+    --panel:#1C1512;
+    --panel-2:#241B17;
+    --ember:#FF5A1F;
+    --molten:#FFB020;
+    --blood:#7A1421;
+    --bone:#EDE1D3;
+    --bone-dim:#9C8E7F;
+    --line:#3A2E27;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none;}
+  html,body{margin:0;padding:0;height:100%;background:var(--void);overflow:hidden;font-family:'Rajdhani',sans-serif;}
+  #app{position:relative;width:100%;height:100vh;max-height:100dvh;overflow:hidden;color:var(--bone);}
+
+  .bg-layer{position:absolute;inset:0;z-index:0;transition:background 0.4s ease;background-size:cover;background-position:center;}
+  .bg-layer::after{
+    content:"";position:absolute;inset:0;
+    background:radial-gradient(ellipse at 50% 15%, rgba(255,90,31,0.12), transparent 55%),
+               linear-gradient(180deg, rgba(11,9,8,0.15) 0%, rgba(11,9,8,0.35) 55%, rgba(11,9,8,0.9) 100%);
+  }
+  .bg-embers{position:absolute;inset:0;z-index:1;pointer-events:none;overflow:hidden;}
+  .ember-particle{position:absolute;bottom:-10px;width:3px;height:3px;border-radius:50%;
+    background:var(--molten);box-shadow:0 0 6px 2px rgba(255,176,32,0.7);
+    animation:rise linear infinite;opacity:0.8;}
+  @keyframes rise{
+    0%{transform:translateY(0) translateX(0);opacity:0;}
+    10%{opacity:0.9;}
+    100%{transform:translateY(-100vh) translateX(var(--drift,20px));opacity:0;}
+  }
+
+  /* ---------- TOP BAR (BANNER DEL PERFIL) ---------- */
+  .topbar{
+    position:absolute;top:0;left:0;right:0;z-index:5;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:14px 16px 20px;
+    background-size:cover;
+    background-position:center 35%;
+    transition:background 0.4s ease;
+    border-bottom-left-radius:20px;
+    border-bottom-right-radius:20px;
+    overflow:hidden;
+    box-shadow:0 6px 18px rgba(0,0,0,0.35);
+  }
+  .topbar::before{
+    content:"";
+    position:absolute;inset:0;
+    background:linear-gradient(180deg, rgba(11,9,8,0.55) 0%, rgba(11,9,8,0.15) 60%, transparent 100%);
+    pointer-events:none;
+  }
+  .topbar::after{
+    content:"";
+    position:absolute;left:0;right:0;bottom:0;height:2px;
+    background:linear-gradient(90deg, transparent, var(--molten), transparent);
+    opacity:0.6;
+  }
+  .topbar > *{position:relative;z-index:1;}
+
+  .profile-btn{display:flex;align-items:center;gap:8px;background:rgba(28,21,18,0.75);border:1.5px solid var(--line);
+    border-radius:40px;padding:4px 14px 4px 4px;backdrop-filter:blur(6px);}
+  .avatar-ring{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+    border:2px solid var(--molten);box-shadow:0 0 10px rgba(255,176,32,0.5);flex-shrink:0;overflow:hidden;background:var(--panel-2);}
+  .avatar-ring svg{width:100%;height:100%;}
+  .profile-label{display:flex;flex-direction:column;line-height:1.1;}
+  .profile-name{font-weight:700;font-size:13px;letter-spacing:0.5px;}
+  .profile-sub{font-size:10.5px;color:var(--bone-dim);font-weight:600;}
+
+  .coin-pill{display:flex;align-items:center;gap:6px;background:rgba(28,21,18,0.75);border:1.5px solid var(--line);
+    border-radius:40px;padding:6px 14px;backdrop-filter:blur(6px);}
+  .coin-icon{width:16px;height:16px;border-radius:50%;background:radial-gradient(circle at 30% 30%, var(--molten), var(--ember) 70%);
+    box-shadow:0 0 6px rgba(255,176,32,0.6);flex-shrink:0;}
+  .coin-num{font-weight:700;font-size:14px;}
+
+  /* ---------- LOBBY CENTER ---------- */
+  .lobby-screen{position:absolute;inset:0;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;}
+  .rank-tag{position:absolute;top:96px;left:0;right:0;text-align:center;}
+  .rank-tag span{font-family:'Anton',sans-serif;font-size:11px;letter-spacing:3px;color:var(--molten);opacity:0.9;
+    text-shadow:0 1px 6px rgba(0,0,0,0.7);}
+
+  .player-stage{flex:1;width:100%;display:flex;align-items:center;justify-content:center;position:relative;}
+  .player-glow{position:absolute;width:220px;height:220px;border-radius:50%;
+    background:radial-gradient(circle, rgba(255,90,31,0.28) 0%, transparent 70%);filter:blur(4px);animation:pulse 3s ease-in-out infinite;}
+  @keyframes pulse{0%,100%{transform:scale(1);opacity:0.7;}50%{transform:scale(1.12);opacity:1;}}
+  .player-figure{position:relative;z-index:2;width:150px;filter:drop-shadow(0 8px 18px rgba(0,0,0,0.6));}
+
+  .title-mark{position:absolute;top:140px;left:0;right:0;text-align:center;pointer-events:none;}
+  .title-mark h1{font-family:'Anton',sans-serif;font-size:30px;letter-spacing:3px;margin:0;
+    background:linear-gradient(180deg, var(--bone) 0%, var(--molten) 60%, var(--ember) 100%);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+    text-shadow:0 2px 12px rgba(255,90,31,0.35);}
+  .title-mark p{margin:2px 0 0;font-size:11px;letter-spacing:4px;color:var(--bone-dim);font-weight:700;}
+
+  /* ---------- BOTTOM CONTROLS ---------- */
+  .bottom-bar{position:relative;z-index:4;width:100%;padding:0 18px 26px;display:flex;flex-direction:column;align-items:center;gap:14px;}
+  .side-buttons{width:100%;display:flex;justify-content:space-between;gap:12px;}
+  .icon-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;background:linear-gradient(180deg, rgba(36,27,23,0.9), rgba(20,15,13,0.9));
+    border:1.5px solid var(--line);border-radius:14px;padding:10px 6px;transition:transform .12s ease, border-color .12s ease;}
+  .icon-btn:active{transform:scale(0.94);border-color:var(--ember);}
+  .icon-btn .glyph{width:26px;height:26px;}
+  .icon-btn .lbl{font-size:11px;font-weight:700;letter-spacing:1px;color:var(--bone-dim);}
+
+  .play-btn{width:100%;position:relative;border:none;padding:0;background:none;cursor:pointer;}
+  .play-btn .surface{position:relative;display:flex;align-items:center;justify-content:center;gap:10px;
+    padding:17px 0;border-radius:14px;
+    background:linear-gradient(180deg, #FF7A38 0%, var(--ember) 45%, var(--blood) 100%);
+    border:1.5px solid rgba(255,178,80,0.6);
+    box-shadow:0 8px 0 #4a0d13, 0 10px 22px rgba(122,20,33,0.45);
+    transition:transform .08s ease, box-shadow .08s ease;}
+  .play-btn:active .surface{transform:translateY(6px);box-shadow:0 2px 0 #4a0d13, 0 4px 10px rgba(122,20,33,0.45);}
+  .play-btn .surface span{font-family:'Anton',sans-serif;font-size:19px;letter-spacing:2px;color:#FFF3E4;
+    text-shadow:0 2px 3px rgba(0,0,0,0.35);}
+  .players-count{font-size:10.5px;color:var(--bone-dim);font-weight:700;letter-spacing:1px;}
+
+  /* ---------- PANELS (Profile / Shop / Inventory) ---------- */
+  .panel{position:absolute;inset:0;z-index:20;background:linear-gradient(180deg, var(--void-2), var(--void) 60%);
+    transform:translateY(100%);transition:transform .32s cubic-bezier(.22,.9,.3,1);display:flex;flex-direction:column;}
+  .panel.open{transform:translateY(0);}
+  .panel-header{display:flex;align-items:center;justify-content:space-between;padding:16px 16px 12px;
+    border-bottom:1.5px solid var(--line);flex-shrink:0;}
+  .panel-title{font-family:'Anton',sans-serif;font-size:20px;letter-spacing:2px;color:var(--bone);}
+  .panel-title .accent{color:var(--molten);}
+  .close-btn{width:34px;height:34px;border-radius:50%;background:var(--panel);border:1.5px solid var(--line);
+    display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--bone-dim);flex-shrink:0;}
+  .close-btn:active{background:var(--panel-2);}
+
+  .panel-body{flex:1;overflow-y:auto;padding:16px;-webkit-overflow-scrolling:touch;}
+  .section-label{font-size:12px;font-weight:700;letter-spacing:2px;color:var(--bone-dim);margin:14px 0 10px;}
+  .section-label:first-child{margin-top:0;}
+
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+  .grid.bgs{grid-template-columns:repeat(2,1fr);}
+
+  .item-card{position:relative;border-radius:14px;border:2px solid var(--line);background:var(--panel);
+    padding:10px 6px 8px;display:flex;flex-direction:column;align-items:center;gap:6px;overflow:hidden;transition:border-color .12s;}
+  .item-card.equipped{border-color:var(--molten);box-shadow:0 0 0 1px var(--molten), 0 0 14px rgba(255,176,32,0.35);}
+  .item-card.locked{opacity:0.55;}
+  .item-card:active{transform:scale(0.97);}
+  .item-card .icon-wrap{width:46px;height:46px;border-radius:50%;overflow:hidden;flex-shrink:0;background:var(--panel-2);
+    display:flex;align-items:center;justify-content:center;border:1px solid var(--line);}
+  .item-card .icon-wrap svg{width:100%;height:100%;}
+  .bg-card .icon-wrap{width:100%;height:64px;border-radius:8px;}
+  .item-name{font-size:10.5px;font-weight:700;text-align:center;letter-spacing:0.3px;line-height:1.2;color:var(--bone);}
+  .price-tag{display:flex;align-items:center;gap:3px;font-size:10px;font-weight:700;color:var(--molten);}
+  .price-tag .mini-coin{width:9px;height:9px;border-radius:50%;background:var(--molten);flex-shrink:0;}
+  .equipped-flag{position:absolute;top:5px;right:5px;background:var(--molten);color:#2a1a00;font-size:8px;font-weight:700;
+    padding:2px 5px;border-radius:6px;letter-spacing:0.5px;}
+  .season-badge{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(90deg, var(--blood), var(--ember));
+    padding:6px 12px;border-radius:20px;margin-bottom:4px;}
+  .season-badge span{font-family:'Anton',sans-serif;font-size:11px;letter-spacing:1.5px;color:#FFF3E4;}
+
+  .save-bar{padding:12px 16px 18px;flex-shrink:0;border-top:1.5px solid var(--line);}
+  .save-btn{width:100%;padding:14px 0;border:none;border-radius:12px;font-family:'Anton',sans-serif;font-size:15px;
+    letter-spacing:2px;color:#FFF3E4;background:linear-gradient(180deg,#FF7A38,var(--ember));
+    box-shadow:0 5px 0 #7a2b0d;}
+  .save-btn:active{transform:translateY(3px);box-shadow:0 2px 0 #7a2b0d;}
+
+  .toast{position:absolute;bottom:100px;left:50%;transform:translateX(-50%) translateY(20px);z-index:50;
+    background:var(--panel);border:1.5px solid var(--molten);padding:10px 20px;border-radius:30px;
+    font-size:13px;font-weight:700;color:var(--bone);opacity:0;transition:opacity .25s ease, transform .25s ease;
+    white-space:nowrap;box-shadow:0 6px 20px rgba(0,0,0,0.4);}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+  .empty-state{text-align:center;padding:40px 20px;color:var(--bone-dim);font-size:13px;font-weight:600;}
+</style>
+</head>
+<body>
+<div id="app">
+
+  <div class="bg-layer" id="bgLayer"></div>
+  <div class="bg-embers" id="embers"></div>
+
+  <!-- LOBBY -->
+  <div class="lobby-screen">
+    <div class="topbar" id="topbar">
+      <button class="profile-btn" id="openProfile">
+        <span class="avatar-ring" id="topAvatar"></span>
+        <span class="profile-label">
+          <span class="profile-name">ADRIAN_MX</span>
+          <span class="profile-sub">Nv. 42</span>
+        </span>
+      </button>
+      <div class="coin-pill">
+        <span class="coin-icon"></span>
+        <span class="coin-num" id="coinDisplay">0</span>
+      </div>
+    </div>
+
+    <div class="rank-tag"><span>RANGO · LLAMA DE BRONCE</span></div>
+
+    <div class="player-stage">
+      <div class="title-mark">
+        <h1>INFERNO ROYALE</h1>
+        <p>TEMPORADA 1 · FUEGO</p>
+      </div>
+      <div class="player-glow"></div>
+      <div class="player-figure" id="playerFigure"></div>
+    </div>
+
+    <div class="bottom-bar">
+      <div class="side-buttons">
+        <button class="icon-btn" id="openInventory">
+          <span class="glyph">
+            <svg viewBox="0 0 24 24" fill="none"><rect x="3" y="8" width="18" height="12" rx="2" stroke="#EDE1D3" stroke-width="1.6"/><path d="M3 8l2-4h14l2 4" stroke="#EDE1D3" stroke-width="1.6" stroke-linejoin="round"/><path d="M9 12a3 3 0 0 0 6 0" stroke="#FFB020" stroke-width="1.6"/></svg>
+          </span>
+          <span class="lbl">INVENTARIO</span>
+        </button>
+
+        <button class="play-btn" id="playBtn" style="flex:1.4;">
+          <span class="surface"><span>INICIAR PARTIDA</span></span>
+        </button>
+
+        <button class="icon-btn" id="openShop">
+          <span class="glyph">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M4 9l1.5-5h13L20 9" stroke="#EDE1D3" stroke-width="1.6" stroke-linejoin="round"/><rect x="4" y="9" width="16" height="11" rx="1.5" stroke="#EDE1D3" stroke-width="1.6"/><path d="M9 13a3 3 0 0 0 6 0" stroke="#FFB020" stroke-width="1.6"/></svg>
+          </span>
+          <span class="lbl">TIENDA</span>
+        </button>
+      </div>
+      <div class="players-count">47 / 50 JUGADORES EN COLA</div>
+    </div>
+  </div>
+
+  <!-- PROFILE PANEL -->
+  <div class="panel" id="profilePanel">
+    <div class="panel-header">
+      <span class="panel-title">MI <span class="accent">PERFIL</span></span>
+      <button class="close-btn" data-close="profilePanel">✕</button>
+    </div>
+    <div class="panel-body">
+      <div class="section-label">ÍCONO</div>
+      <div class="grid" id="profileIconGrid"></div>
+      <div class="section-label">FONDO DE PERFIL</div>
+      <div class="grid bgs" id="profileBgGrid"></div>
+    </div>
+    <div class="save-bar">
+      <button class="save-btn" id="saveProfileBtn">GUARDAR CAMBIOS</button>
+    </div>
+  </div>
+
+  <!-- SHOP PANEL -->
+  <div class="panel" id="shopPanel">
+    <div class="panel-header">
+      <span class="panel-title">TIENDA <span class="accent">DE FUEGO</span></span>
+      <button class="close-btn" data-close="shopPanel">✕</button>
+    </div>
+    <div class="panel-body">
+      <span class="season-badge"><span>TEMPORADA 1 · COLECCIÓN FUEGO</span></span>
+      <div class="section-label">ÍCONOS</div>
+      <div class="grid" id="shopIconGrid"></div>
+      <div class="section-label">FONDOS</div>
+      <div class="grid bgs" id="shopBgGrid"></div>
+    </div>
+  </div>
+
+  <!-- INVENTORY PANEL -->
+  <div class="panel" id="inventoryPanel">
+    <div class="panel-header">
+      <span class="panel-title">MI <span class="accent">INVENTARIO</span></span>
+      <button class="close-btn" data-close="inventoryPanel">✕</button>
+    </div>
+    <div class="panel-body">
+      <div class="section-label">ÍCONOS OBTENIDOS</div>
+      <div class="grid" id="invIconGrid"></div>
+      <div class="section-label">FONDOS OBTENIDOS</div>
+      <div class="grid bgs" id="invBgGrid"></div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+</div>
+
+<script>
+/* ============ ORIGINAL ART: FIRE-THEMED ICONS & BACKGROUNDS (Season 1) ============ */
+
+const ICONS = [
+  { id:'ic_default', name:'Llama Base', price:0,
+    svg:`<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="32" fill="#241B17"/><path d="M32 12c6 8-4 10-4 18a8 8 0 0 0 16 0c0-4-2-6-2-6 4 2 6 8 6 12 0 8.8-7.2 16-16 16s-16-7.2-16-16C16 26 24 20 32 12z" fill="#FF5A1F"/><path d="M32 24c2 4-2 6-2 10a4 4 0 0 0 8 0c0-2-1-3-1-3 2 1 3 4 3 6 0 4.4-3.6 8-8 8s-8-3.6-8-8c0-6 4-9 8-13z" fill="#FFB020"/></svg>` },
+  { id:'ic_skull', name:'Cráneo Cenizo', price:250,
+    svg:`<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="32" fill="#1C1512"/><ellipse cx="32" cy="30" rx="14" ry="13" fill="#EDE1D3"/><rect x="24" y="38" width="16" height="8" rx="2" fill="#EDE1D3"/><circle cx="26" cy="28" r="4" fill="#1C1512"/><circle cx="38" cy="28" r="4" fill="#1C1512"/><path d="M30 34l2 4 2-4" stroke="#1C1512" stroke-width="2" fill="none"/><path d="M18 18c4-8 24-8 28 0" stroke="#FF5A1F" stroke-width="3" fill="none" stroke-linecap="round"/></svg>` },
+  { id:'ic_wolf', name:'Lobo del Ocaso', price:320,
+    svg:`<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="32" fill="#241B17"/><path d="M18 40l4-16 6 6h8l6-6 4 16-6-4-8 6-8-6z" fill="#3A2E27"/><path d="M18 40l4-16 6 6h8l6-6 4 16-6-4-8 6-8-6z" fill="none" stroke="#FFB020" stroke-width="1.5"/><circle cx="26" cy="30" r="2.4" fill="#FF5A1F"/><circle cx="38" cy="30" r="2.4" fill="#FF5A1F"/></svg>` },
+  { id:'ic_phoenix', name:'Fénix Naciente', price:480,
+    svg:`<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="32" fill="#1C1512"/><path d="M32 10c10 6 6 14 14 18-6 0-8-2-8-2 6 6 4 14-2 18 2-6-2-8-2-8 0 8-8 12-8 12s-8-4-8-12c0 0-4 2-2 8-6-4-8-12-2-18 0 0-2 2-8 2 8-4 4-12 14-18z" fill="url(#pg)"/><defs><linearGradient id="pg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFB020"/><stop offset="1" stop-color="#FF5A1F"/></linearGradient></defs></svg>` },
+  { id:'ic_mask', name:'Máscara Carbón', price:210,
+    svg:`<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="32" fill="#241B17"/><path d="M14 26c6-8 30-8 36 0-2 12-8 22-18 22s-16-10-18-22z" fill="#0B0908"/><path d="M22 28l6 4-6 4M42 28l-6 4 6 4" stroke="#FF5A1F" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg>` },
+  { id:'ic_ember_eye', name:'Ojo de Ascua', price:380,
+    svg:`<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="32" fill="#1C1512"/><path d="M10 32c8-10 36-10 44 0-8 10-36 10-44 0z" fill="#3A2E27"/><circle cx="32" cy="32" r="9" fill="#FF5A1F"/><circle cx="32" cy="32" r="4" fill="#FFB020"/></svg>` },
+  { id:'ic_crown', name:'Corona en Llamas', price:600,
+    svg:`<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="32" fill="#241B17"/><path d="M16 40l4-16 8 8 4-12 4 12 8-8 4 16z" fill="#FFB020"/><path d="M16 40h32v6H16z" fill="#FF5A1F"/></svg>` },
+  { id:'ic_rune', name:'Runa Ígnea', price:150,
+    svg:`<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="32" fill="#1C1512"/><path d="M32 14v36M20 22l24 20M44 22L20 42" stroke="#FF5A1F" stroke-width="3" stroke-linecap="round"/><circle cx="32" cy="32" r="5" fill="#FFB020"/></svg>` },
+  { id:'ic_dragon', name:'Ojo de Dragón', price:700,
+    svg:`<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="32" fill="#0B0908"/><path d="M8 32c10-14 38-14 48 0-10 14-38 14-48 0z" fill="#7A1421"/><ellipse cx="32" cy="32" rx="8" ry="12" fill="#FFB020"/><rect x="30" y="22" width="4" height="20" rx="2" fill="#0B0908"/></svg>` },
+];
+
+const BACKGROUNDS = [
+  { id:'bg_default', name:'Brasas', price:0, css:'radial-gradient(ellipse at 50% 30%, #3a2016 0%, #14100d 70%)' },
+  { id:'bg_volcano', name:'Cráter Activo', price:300, css:'linear-gradient(180deg,#1a0f0a 0%,#5c1c0e 55%,#ff6a1a 100%)' },
+  { id:'bg_ashfall', name:'Lluvia de Ceniza', price:260, css:'radial-gradient(circle at 30% 20%, #4a2a1a, #0b0908 75%)' },
+  { id:'bg_bloodmoon', name:'Luna Carmesí', price:420, css:'linear-gradient(160deg,#1a0a0a 0%,#7a1421 60%,#2c0a0a 100%)' },
+  { id:'bg_wildfire', name:'Incendio Salvaje', price:380, css:'linear-gradient(120deg,#0b0908 0%,#8a2a0e 45%,#ffb020 100%)' },
+  { id:'bg_obsidian', name:'Obsidiana', price:340, css:'linear-gradient(200deg,#0a0a0a 0%,#241b17 50%,#3a1010 100%)' },
+  { id:'bg_infernal', name:'Núcleo Infernal', price:650, css:'radial-gradient(circle at 50% 60%, #ffb020 0%, #ff5a1f 35%, #2a0a05 75%)' },
+  { id:'bg_scorched', name:'Tierra Quemada', price:220, css:'linear-gradient(180deg,#2a1f18 0%,#120d0a 100%)' },
+];
+
+/* ============ STATE ============ */
+let state = {
+  coins: 1200,
+  equippedIcon: 'ic_default',
+  equippedBg: 'bg_default',
+  ownedIcons: ['ic_default'],
+  ownedBgs: ['bg_default'],
+};
+let draftIcon = state.equippedIcon;
+let draftBg = state.equippedBg;
+
+const STORAGE_KEY = 'inferno-royale-profile';
+
+async function loadState(){
+  try{
+    const res = await window.storage.get(STORAGE_KEY, false);
+    if(res && res.value){
+      const saved = JSON.parse(res.value);
+      state = Object.assign(state, saved);
+    }
+  }catch(e){ /* no saved profile yet */ }
+  draftIcon = state.equippedIcon;
+  draftBg = state.equippedBg;
+  renderAll();
+}
+
+async function persistState(){
+  try{
+    await window.storage.set(STORAGE_KEY, JSON.stringify(state), false);
+  }catch(e){ console.error('No se pudo guardar el perfil', e); }
+}
+
+/* ============ RENDER HELPERS ============ */
+function findIcon(id){ return ICONS.find(i=>i.id===id) || ICONS[0]; }
+function findBg(id){ return BACKGROUNDS.find(b=>b.id===id) || BACKGROUNDS[0]; }
+
+function applyEquipped(){
+  const bgCss = findBg(state.equippedBg).css;
+  document.getElementById('topAvatar').innerHTML = findIcon(state.equippedIcon).svg;
+  document.getElementById('bgLayer').style.background = bgCss;
+  document.getElementById('topbar').style.background = bgCss;
+  document.getElementById('coinDisplay').textContent = state.coins.toLocaleString('es-MX');
+}
+
+/* Preview en vivo mientras eliges en el perfil (sin guardar todavía) */
+function previewBg(bgId){
+  const bgCss = findBg(bgId).css;
+  document.getElementById('bgLayer').style.background = bgCss;
+  document.getElementById('topbar').style.background = bgCss;
+}
+function revertPreview(){
+  const bgCss = findBg(state.equippedBg).css;
+  document.getElementById('bgLayer').style.background = bgCss;
+  document.getElementById('topbar').style.background = bgCss;
+}
+
+function buildPlayerFigure(){
+  const emberColor = '#FF5A1F';
+  document.getElementById('playerFigure').innerHTML = `
+    <svg viewBox="0 0 120 220" xmlns="http://www.w3.org/2000/svg">
+      <ellipse cx="60" cy="210" rx="34" ry="8" fill="#000" opacity="0.35"/>
+      <rect x="44" y="120" width="32" height="55" rx="10" fill="#2A2422" stroke="#3A2E27" stroke-width="2"/>
+      <rect x="30" y="128" width="14" height="42" rx="7" fill="#241B17"/>
+      <rect x="76" y="128" width="14" height="42" rx="7" fill="#241B17"/>
+      <rect x="38" y="168" width="16" height="40" rx="6" fill="#1C1512"/>
+      <rect x="66" y="168" width="16" height="40" rx="6" fill="#1C1512"/>
+      <circle cx="60" cy="95" r="26" fill="#EDE1D3"/>
+      <path d="M36 90c0-16 10-28 24-28s24 12 24 28c-6-4-14-6-24-6s-18 2-24 6z" fill="#241B17"/>
+      <rect x="42" y="90" width="36" height="10" rx="5" fill="${emberColor}" opacity="0.85"/>
+      <path d="M50 118c4-10 16-10 20 0" stroke="#3A2E27" stroke-width="3" fill="none"/>
+    </svg>`;
+}
+
+function itemCard({item, type, owned, equipped, mode}){
+  const isBg = type==='bg';
+  const card = document.createElement('div');
+  card.className = 'item-card ' + (isBg?'bg-card':'') + (equipped?' equipped':'') + (!owned && mode==='profile' ? ' locked':'');
+  const iconInner = isBg
+    ? `<div class="icon-wrap" style="background:${item.css}"></div>`
+    : `<div class="icon-wrap">${item.svg}</div>`;
+  card.innerHTML = `
+    ${equipped ? '<span class="equipped-flag">EQUIPADO</span>' : ''}
+    ${iconInner}
+    <span class="item-name">${item.name}</span>
+    ${mode==='shop' && !owned ? `<span class="price-tag"><span class="mini-coin"></span>${item.price}</span>` : ''}
+    ${mode==='shop' && owned ? `<span class="price-tag" style="color:#9C8E7F;">EN POSESIÓN</span>` : ''}
+  `;
+  return card;
+}
+
+/* ---------- PROFILE PANEL RENDER ---------- */
+function renderProfilePanel(){
+  const iconGrid = document.getElementById('profileIconGrid');
+  const bgGrid = document.getElementById('profileBgGrid');
+  iconGrid.innerHTML = ''; bgGrid.innerHTML = '';
+
+  ICONS.forEach(item=>{
+    const owned = state.ownedIcons.includes(item.id);
+    const card = itemCard({item, type:'icon', owned, equipped: draftIcon===item.id, mode:'profile'});
+    if(owned){
+      card.addEventListener('click', ()=>{
+        draftIcon = item.id;
+        document.getElementById('topAvatar').innerHTML = findIcon(draftIcon).svg; // preview en vivo del ícono
+        renderProfilePanel();
+      });
+    }
+    iconGrid.appendChild(card);
+  });
+
+  BACKGROUNDS.forEach(item=>{
+    const owned = state.ownedBgs.includes(item.id);
+    const card = itemCard({item, type:'bg', owned, equipped: draftBg===item.id, mode:'profile'});
+    if(owned){
+      card.addEventListener('click', ()=>{
+        draftBg = item.id;
+        previewBg(draftBg); // 👈 preview en vivo del fondo en lobby + topbar
+        renderProfilePanel();
+      });
+    }
+    bgGrid.appendChild(card);
+  });
+}
+
+/* ---------- SHOP PANEL RENDER ---------- */
+function renderShopPanel(){
+  const iconGrid = document.getElementById('shopIconGrid');
+  const bgGrid = document.getElementById('shopBgGrid');
+  iconGrid.innerHTML = ''; bgGrid.innerHTML = '';
+
+  ICONS.forEach(item=>{
+    const owned = state.ownedIcons.includes(item.id);
+    const card = itemCard({item, type:'icon', owned, equipped:false, mode:'shop'});
+    if(!owned){
+      card.addEventListener('click', ()=> buyItem(item, 'icon'));
+    }
+    iconGrid.appendChild(card);
+  });
+
+  BACKGROUNDS.forEach(item=>{
+    const owned = state.ownedBgs.includes(item.id);
+    const card = itemCard({item, type:'bg', owned, equipped:false, mode:'shop'});
+    if(!owned){
+      card.addEventListener('click', ()=> buyItem(item, 'bg'));
+    }
+    bgGrid.appendChild(card);
+  });
+}
+
+function buyItem(item, type){
+  if(state.coins < item.price){
+    showToast('No tienes suficientes monedas');
+    return;
+  }
+  state.coins -= item.price;
+  if(type==='icon') state.ownedIcons.push(item.id);
+  else state.ownedBgs.push(item.id);
+  persistState();
+  applyEquipped();
+  renderShopPanel();
+  renderProfilePanel();
+  showToast(`${item.name} desbloqueado`);
+}
+
+/* ---------- INVENTORY PANEL RENDER ---------- */
+function renderInventoryPanel(){
+  const iconGrid = document.getElementById('invIconGrid');
+  const bgGrid = document.getElementById('invBgGrid');
+  iconGrid.innerHTML = ''; bgGrid.innerHTML = '';
+
+  const ownedIcons = ICONS.filter(i=>state.ownedIcons.includes(i.id));
+  const ownedBgs = BACKGROUNDS.filter(b=>state.ownedBgs.includes(b.id));
+
+  if(ownedIcons.length===0){
+    iconGrid.innerHTML = '<div class="empty-state">Aún no tienes íconos. Visita la tienda.</div>';
+  }else{
+    ownedIcons.forEach(item=>{
+      iconGrid.appendChild(itemCard({item, type:'icon', owned:true, equipped: state.equippedIcon===item.id, mode:'inventory'}));
+    });
+  }
+
+  if(ownedBgs.length===0){
+    bgGrid.innerHTML = '<div class="empty-state">Aún no tienes fondos. Visita la tienda.</div>';
+  }else{
+    ownedBgs.forEach(item=>{
+      bgGrid.appendChild(itemCard({item, type:'bg', owned:true, equipped: state.equippedBg===item.id, mode:'inventory'}));
+    });
+  }
+}
+
+function renderAll(){
+  buildPlayerFigure();
+  applyEquipped();
+  renderProfilePanel();
+  renderShopPanel();
+  renderInventoryPanel();
+}
+
+/* ============ PANEL NAVIGATION ============ */
+function openPanel(id){
+  if(id==='profilePanel'){ draftIcon = state.equippedIcon; draftBg = state.equippedBg; renderProfilePanel(); }
+  if(id==='shopPanel'){ renderShopPanel(); }
+  if(id==='inventoryPanel'){ renderInventoryPanel(); }
+  document.getElementById(id).classList.add('open');
+}
+function closePanel(id){ document.getElementById(id).classList.remove('open'); }
+
+document.getElementById('openProfile').addEventListener('click', ()=> openPanel('profilePanel'));
+document.getElementById('openShop').addEventListener('click', ()=> openPanel('shopPanel'));
+document.getElementById('openInventory').addEventListener('click', ()=> openPanel('inventoryPanel'));
+
+document.querySelectorAll('[data-close]').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    if(btn.dataset.close === 'profilePanel'){
+      // Si cierra sin guardar, revierte el preview
+      draftIcon = state.equippedIcon;
+      draftBg = state.equippedBg;
+      revertPreview();
+      document.getElementById('topAvatar').innerHTML = findIcon(state.equippedIcon).svg;
+    }
+    closePanel(btn.dataset.close);
+  });
+});
+
+document.getElementById('saveProfileBtn').addEventListener('click', async ()=>{
+  state.equippedIcon = draftIcon;
+  state.equippedBg = draftBg;
+  await persistState();
+  applyEquipped();
+  closePanel('profilePanel');
+  showToast('Perfil guardado');
+});
+
+document.getElementById('playBtn').addEventListener('click', ()=>{
+  showToast('Buscando partida...');
+});
+
+/* ============ TOAST ============ */
+let toastTimer;
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=> t.classList.remove('show'), 1800);
+}
+
+/* ============ EMBER PARTICLES ============ */
+function spawnEmbers(){
+  const container = document.getElementById('embers');
+  for(let i=0;i<22;i++){
+    const p = document.createElement('div');
+    p.className = 'ember-particle';
+    const left = Math.random()*100;
+    const duration = 5 + Math.random()*6;
+    const delay = Math.random()*8;
+    const drift = (Math.random()*40-20)+'px';
+    const size = 2 + Math.random()*2;
+    p.style.left = left+'%';
+    p.style.width = size+'px';
+    p.style.height = size+'px';
+    p.style.animationDuration = duration+'s';
+    p.style.animationDelay = delay+'s';
+    p.style.setProperty('--drift', drift);
+    container.appendChild(p);
+  }
+}
+
+spawnEmbers();
+loadState();
+</script>
+</body>
+</html>
