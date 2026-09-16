@@ -50,7 +50,7 @@
     100%{transform:translateY(-100vh) translateX(var(--drift,20px));opacity:0;}
   }
 
-  /* ---------- TOP BAR — BANNER COMPACTO ARRIBA A LA DERECHA ---------- */
+  /* ---------- TOP BAR ---------- */
   .topbar-wrap{
     position:absolute;
     top:calc(env(safe-area-inset-top) + 8px);
@@ -70,16 +70,16 @@
     overflow:hidden;
     box-shadow:0 4px 14px rgba(0,0,0,0.6), inset 0 0 12px rgba(0,0,0,0.35);
     position:relative;
+    min-height:56px;
   }
   .topbar::before{
     content:"";
     position:absolute;inset:0;
-    background:linear-gradient(90deg, rgba(11,9,8,0.7) 0%, rgba(11,9,8,0.25) 50%, rgba(11,9,8,0.6) 100%);
+    background:linear-gradient(90deg, rgba(11,9,8,0.7) 0%, rgba(11,9,8,0.2) 50%, rgba(11,9,8,0.6) 100%);
     pointer-events:none;
   }
   .topbar > *{position:relative;z-index:1;}
 
-  /* Avatar compacto */
   .profile-btn{display:flex;align-items:center;gap:7px;background:none;border:none;padding:0;}
   .avatar-frame{position:relative;width:44px;height:44px;flex-shrink:0;}
   .avatar-frame .frame-bg{
@@ -117,7 +117,6 @@
     white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
   }
 
-  /* Emblema de rango compacto a la derecha */
   .rank-emblem{
     width:36px;height:36px;flex-shrink:0;
     display:flex;align-items:center;justify-content:center;
@@ -125,10 +124,9 @@
   }
   .rank-emblem svg{width:100%;height:100%;}
 
-  /* Monedas — pastilla chica debajo del banner, alineada a la derecha */
   .coin-pill{
     position:absolute;
-    top:calc(env(safe-area-inset-top) + 66px);
+    top:calc(env(safe-area-inset-top) + 70px);
     right:10px;z-index:6;
     display:flex;align-items:center;gap:5px;
     background:rgba(28,21,18,0.9);border:1.5px solid var(--molten);
@@ -205,12 +203,16 @@
   .item-card .icon-wrap{width:42px;height:42px;border-radius:50%;overflow:hidden;flex-shrink:0;background:var(--panel-2);
     display:flex;align-items:center;justify-content:center;border:1px solid var(--line);}
   .item-card .icon-wrap svg{width:100%;height:100%;}
-  .bg-card .icon-wrap{width:100%;height:56px;border-radius:6px;}
+  .bg-card .icon-wrap{
+    width:100%;height:64px;border-radius:6px;
+    background-size:cover;
+    background-position:center 40%;
+  }
   .item-name{font-size:10px;font-weight:700;text-align:center;letter-spacing:0.3px;line-height:1.2;color:var(--bone);}
   .price-tag{display:flex;align-items:center;gap:3px;font-size:9.5px;font-weight:700;color:var(--molten);}
   .price-tag .mini-coin{width:8px;height:8px;border-radius:50%;background:var(--molten);flex-shrink:0;}
   .equipped-flag{position:absolute;top:4px;right:4px;background:var(--molten);color:#2a1a00;font-size:7.5px;font-weight:700;
-    padding:1.5px 4px;border-radius:5px;letter-spacing:0.4px;}
+    padding:1.5px 4px;border-radius:5px;letter-spacing:0.4px;z-index:2;}
   .season-badge{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(90deg, var(--blood), var(--ember));
     padding:5px 10px;border-radius:20px;margin-bottom:4px;}
   .season-badge span{font-family:'Anton',sans-serif;font-size:10px;letter-spacing:1.2px;color:#FFF3E4;}
@@ -230,13 +232,10 @@
 
   .empty-state{text-align:center;padding:30px 20px;color:var(--bone-dim);font-size:12px;font-weight:600;}
 
-  /* =====================================================
-     IPHONE / ANDROID EN HORIZONTAL (landscape)
-     Aquí reducimos todo para que no se vea gigante al girar
-     ===================================================== */
+  /* Landscape iPhone */
   @media (orientation: landscape){
     .topbar-wrap{top:calc(env(safe-area-inset-top) + 6px);right:8px;max-width:55%;}
-    .topbar{padding:4px 7px 4px 4px;border-radius:12px;}
+    .topbar{padding:4px 7px 4px 4px;border-radius:12px;min-height:48px;}
     .avatar-frame{width:36px;height:36px;}
     .avatar-frame .frame-bg{padding:1.5px;border-radius:7px;}
     .avatar-ring{inset:1.5px;border-radius:6px;}
@@ -245,7 +244,7 @@
     .profile-sub{font-size:7.5px;letter-spacing:0.8px;}
     .rank-emblem{width:30px;height:30px;}
 
-    .coin-pill{top:calc(env(safe-area-inset-top) + 52px);right:8px;padding:3px 9px;}
+    .coin-pill{top:calc(env(safe-area-inset-top) + 56px);right:8px;padding:3px 9px;}
     .coin-icon{width:11px;height:11px;}
     .coin-num{font-size:11px;}
 
@@ -270,12 +269,11 @@
     .grid{grid-template-columns:repeat(4,1fr);gap:7px;}
     .grid.bgs{grid-template-columns:repeat(3,1fr);}
     .item-card .icon-wrap{width:36px;height:36px;}
-    .bg-card .icon-wrap{height:46px;}
+    .bg-card .icon-wrap{height:52px;}
     .item-name{font-size:9px;}
     .panel-body{padding:12px;}
   }
 
-  /* iPhone muy chico en portrait */
   @media (orientation: portrait) and (max-height:700px){
     .player-figure{width:110px;}
     .player-glow{width:170px;height:170px;}
@@ -293,7 +291,6 @@
 
   <div class="lobby-screen">
 
-    <!-- BANNER DEL PERFIL — compacto arriba a la derecha -->
     <div class="topbar-wrap">
       <div class="topbar" id="topbar">
         <button class="profile-btn" id="openProfile">
@@ -429,26 +426,149 @@ const ICONS = [
     svg:`<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="32" fill="#0e1418"/><path d="M18 46V30a14 14 0 0 1 28 0v16l-4-4-4 4-4-4-4 4-4-4-4 4z" fill="#EDE1D3"/><circle cx="26" cy="30" r="3" fill="#0B0908"/><circle cx="38" cy="30" r="3" fill="#0B0908"/><ellipse cx="32" cy="38" rx="3" ry="4" fill="#0B0908"/></svg>` },
 ];
 
-/* ============ BANNERS DE FUEGO + FONDOS MODERNOS ============ */
+/* ============================================================
+   BANNERS PROCEDURALES DE LLAMAS — SVG con feTurbulence
+   Cada banner es un SVG embebido como data URI.
+   Colores únicos: naranja, azul, morado, amarillo, verde, rosa, blanco.
+   ============================================================ */
+
+/**
+ * Genera un SVG de llamas realistas.
+ * @param {string} colA - color base de la llama (más intensa)
+ * @param {string} colB - color medio
+ * @param {string} colC - color de la punta / brillo
+ * @param {string} colBg - color de fondo
+ * @param {string} colBgTop - color del fondo arriba (humo)
+ */
+function buildFlameBanner(colA, colB, colC, colBg, colBgTop){
+  const svg = `
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 120" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="${colBgTop}"/>
+      <stop offset="0.6" stop-color="${colBg}"/>
+      <stop offset="1" stop-color="#000000"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="95%" r="80%">
+      <stop offset="0" stop-color="${colC}" stop-opacity="0.95"/>
+      <stop offset="0.35" stop-color="${colA}" stop-opacity="0.85"/>
+      <stop offset="0.7" stop-color="${colB}" stop-opacity="0.4"/>
+      <stop offset="1" stop-color="${colBg}" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="flameBlur" x="-20%" y="-20%" width="140%" height="140%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.012 0.05" numOctaves="3" seed="3" result="noise">
+        <animate attributeName="baseFrequency" dur="9s" values="0.012 0.05;0.018 0.07;0.012 0.05" repeatCount="indefinite"/>
+      </feTurbulence>
+      <feDisplacementMap in="SourceGraphic" in2="noise" scale="22" xChannelSelector="R" yChannelSelector="G"/>
+      <feGaussianBlur stdDeviation="1.4"/>
+    </filter>
+    <filter id="softBlur" x="-10%" y="-10%" width="120%" height="120%">
+      <feGaussianBlur stdDeviation="2.5"/>
+    </filter>
+    <filter id="sparkGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="1.2" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <!-- Fondo -->
+  <rect width="400" height="120" fill="url(#bg)"/>
+
+  <!-- Resplandor inferior -->
+  <ellipse cx="200" cy="120" rx="220" ry="70" fill="url(#glow)"/>
+
+  <!-- Capa 1: llamas grandes al fondo -->
+  <g filter="url(#flameBlur)" opacity="0.85">
+    <path d="M-20 120 Q 20 50 60 90 Q 90 30 130 85 Q 170 20 210 80 Q 250 25 290 85 Q 330 35 370 90 Q 400 55 420 120 Z"
+          fill="${colA}"/>
+  </g>
+
+  <!-- Capa 2: llamas medianas -->
+  <g filter="url(#flameBlur)" opacity="0.95">
+    <path d="M-10 120 Q 30 70 70 100 Q 110 55 150 95 Q 190 45 230 95 Q 270 55 310 98 Q 350 65 390 100 Q 410 80 420 120 Z"
+          fill="${colB}"/>
+  </g>
+
+  <!-- Capa 3: llamas internas brillantes -->
+  <g filter="url(#flameBlur)" opacity="1">
+    <path d="M0 120 Q 40 90 80 108 Q 120 80 160 105 Q 200 70 240 105 Q 280 82 320 108 Q 360 90 400 110 L 400 120 Z"
+          fill="${colC}"/>
+  </g>
+
+  <!-- Humo superior -->
+  <g opacity="0.35" filter="url(#softBlur)">
+    <ellipse cx="100" cy="20" rx="90" ry="22" fill="#1a1a1a"/>
+    <ellipse cx="280" cy="14" rx="110" ry="20" fill="#222"/>
+  </g>
+
+  <!-- Chispas / brasas -->
+  <g filter="url(#sparkGlow)" fill="${colC}">
+    <circle cx="60" cy="70" r="1.6">
+      <animate attributeName="cy" dur="3s" values="80;20;80" repeatCount="indefinite"/>
+      <animate attributeName="opacity" dur="3s" values="0;1;0" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="140" cy="60" r="1.2">
+      <animate attributeName="cy" dur="4s" values="90;15;90" repeatCount="indefinite"/>
+      <animate attributeName="opacity" dur="4s" values="0;0.9;0" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="220" cy="65" r="1.8">
+      <animate attributeName="cy" dur="3.5s" values="85;10;85" repeatCount="indefinite"/>
+      <animate attributeName="opacity" dur="3.5s" values="0;1;0" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="300" cy="72" r="1.4">
+      <animate attributeName="cy" dur="4.5s" values="95;25;95" repeatCount="indefinite"/>
+      <animate attributeName="opacity" dur="4.5s" values="0;0.85;0" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="360" cy="68" r="1.1">
+      <animate attributeName="cy" dur="3.8s" values="88;18;88" repeatCount="indefinite"/>
+      <animate attributeName="opacity" dur="3.8s" values="0;0.8;0" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="100" cy="80" r="1.3">
+      <animate attributeName="cy" dur="5s" values="100;30;100" repeatCount="indefinite"/>
+      <animate attributeName="opacity" dur="5s" values="0;0.7;0" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="260" cy="78" r="1.5">
+      <animate attributeName="cy" dur="4.2s" values="92;22;92" repeatCount="indefinite"/>
+      <animate attributeName="opacity" dur="4.2s" values="0;0.95;0" repeatCount="indefinite"/>
+    </circle>
+  </g>
+</svg>`;
+  // encodeURIComponent para meterlo como data URI seguro
+  return `url("data:image/svg+xml;utf8,${encodeURIComponent(svg)}")`;
+}
+
+/* Banner procedural tipo "gradiente moderno" (para fondos no-fuego) */
+function buildModernBg(grad){
+  return grad;
+}
+
 const BACKGROUNDS = [
+  /* ---------- BANNERS DE LLAMAS REALISTAS ---------- */
   { id:'bg_default', name:'Brasas', price:0,
-    css:'radial-gradient(ellipse at 50% 30%, #3a2016 0%, #14100d 70%)' },
+    css: buildFlameBanner('#FF5A1F','#FFB020','#FFF3A0','#7A1421','#1a0a05') },
 
-  /* Banners de fuego de colores */
   { id:'bg_flame_blue', name:'Llamas Azules', price:400,
-    css:'radial-gradient(ellipse at 50% 80%, #1e40af 0%, #0c1a4a 40%, #02030a 75%)' },
-  { id:'bg_flame_purple', name:'Llamas Moradas', price:450,
-    css:'radial-gradient(ellipse at 50% 80%, #7c3aed 0%, #3b0764 45%, #0a0212 78%)' },
-  { id:'bg_flame_yellow', name:'Llamas Amarillas', price:420,
-    css:'radial-gradient(ellipse at 50% 80%, #fde047 0%, #b45309 45%, #1a0e02 78%)' },
-  { id:'bg_flame_green', name:'Infierno Verde', price:480,
-    css:'radial-gradient(ellipse at 50% 80%, #22c55e 0%, #064e3b 45%, #02120a 78%)' },
-  { id:'bg_flame_pink', name:'Llamas Rosas', price:460,
-    css:'radial-gradient(ellipse at 50% 80%, #ec4899 0%, #831843 45%, #170210 78%)' },
-  { id:'bg_flame_white', name:'Fuego Blanco', price:550,
-    css:'radial-gradient(ellipse at 50% 80%, #fef3c7 0%, #f59e0b 35%, #7c2d12 65%, #0a0503 90%)' },
+    css: buildFlameBanner('#1e40af','#3b82f6','#93c5fd','#0c1a4a','#02030a') },
 
-  /* Fondos modernos */
+  { id:'bg_flame_purple', name:'Llamas Moradas', price:450,
+    css: buildFlameBanner('#7c3aed','#a855f7','#e9d5ff','#3b0764','#0a0212') },
+
+  { id:'bg_flame_yellow', name:'Llamas Amarillas', price:420,
+    css: buildFlameBanner('#f59e0b','#fde047','#fffbeb','#7c2d12','#1a0e02') },
+
+  { id:'bg_flame_green', name:'Infierno Verde', price:480,
+    css: buildFlameBanner('#22c55e','#4ade80','#dcfce7','#064e3b','#02120a') },
+
+  { id:'bg_flame_pink', name:'Llamas Rosas', price:460,
+    css: buildFlameBanner('#ec4899','#f472b6','#fce7f3','#831843','#170210') },
+
+  { id:'bg_flame_white', name:'Fuego Blanco', price:550,
+    css: buildFlameBanner('#f59e0b','#fef3c7','#ffffff','#7c2d12','#0a0503') },
+
+  { id:'bg_flame_cyan', name:'Llamas Cian', price:430,
+    css: buildFlameBanner('#0e7490','#22d3ee','#cffafe','#083344','#021016') },
+
+  /* ---------- FONDOS MODERNOS (gradientes, sin llamas) ---------- */
   { id:'bg_cyber_neon', name:'Ciudad Neón', price:500,
     css:'linear-gradient(135deg, #0f0c29 0%, #302b63 45%, #ff00cc 100%)' },
   { id:'bg_synthwave', name:'Atardecer Synth', price:520,
@@ -508,16 +628,16 @@ function findIcon(id){ return ICONS.find(i=>i.id===id) || ICONS[0]; }
 function findBg(id){ return BACKGROUNDS.find(b=>b.id===id) || BACKGROUNDS[0]; }
 
 function applyEquipped(){
-  document.getElementById('topbar').style.background = findBg(state.equippedBg).css;
+  document.getElementById('topbar').style.backgroundImage = findBg(state.equippedBg).css;
   document.getElementById('topAvatar').innerHTML = findIcon(state.equippedIcon).svg;
   document.getElementById('coinDisplay').textContent = state.coins.toLocaleString('es-MX');
 }
 
 function previewBg(bgId){
-  document.getElementById('topbar').style.background = findBg(bgId).css;
+  document.getElementById('topbar').style.backgroundImage = findBg(bgId).css;
 }
 function revertPreview(){
-  document.getElementById('topbar').style.background = findBg(state.equippedBg).css;
+  document.getElementById('topbar').style.backgroundImage = findBg(state.equippedBg).css;
 }
 
 function buildPlayerFigure(){
@@ -542,7 +662,7 @@ function itemCard({item, type, owned, equipped, mode}){
   const card = document.createElement('div');
   card.className = 'item-card ' + (isBg?'bg-card':'') + (equipped?' equipped':'') + (!owned && mode==='profile' ? ' locked':'');
   const iconInner = isBg
-    ? `<div class="icon-wrap" style="background:${item.css}"></div>`
+    ? `<div class="icon-wrap" style="background-image:${item.css};background-size:cover;background-position:center 40%;"></div>`
     : `<div class="icon-wrap">${item.svg}</div>`;
   card.innerHTML = `
     ${equipped ? '<span class="equipped-flag">EQUIPADO</span>' : ''}
