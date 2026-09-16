@@ -137,6 +137,34 @@
     box-shadow:0 0 5px rgba(255,176,32,0.6);flex-shrink:0;}
   .coin-num{font-weight:700;font-size:12px;color:var(--bone);}
 
+  /* ---------- BOTÓN DE MÚSICA ---------- */
+  .music-btn{
+    position:absolute;
+    top:calc(env(safe-area-inset-top) + 8px);
+    left:10px;z-index:7;
+    width:40px;height:40px;border-radius:50%;
+    background:rgba(28,21,18,0.9);
+    border:1.5px solid var(--molten);
+    display:flex;align-items:center;justify-content:center;
+    box-shadow:0 3px 10px rgba(0,0,0,0.5);
+    backdrop-filter:blur(6px);
+    transition:transform .12s ease;
+  }
+  .music-btn:active{transform:scale(0.9);}
+  .music-btn svg{width:20px;height:20px;}
+  .music-btn .icon-on{display:none;}
+  .music-btn.playing .icon-on{display:block;}
+  .music-btn.playing .icon-off{display:none;}
+  .music-btn.playing{
+    border-color:var(--ember);
+    box-shadow:0 0 12px rgba(255,90,31,0.6), 0 3px 10px rgba(0,0,0,0.5);
+    animation:musicPulse 1.6s ease-in-out infinite;
+  }
+  @keyframes musicPulse{
+    0%,100%{box-shadow:0 0 10px rgba(255,90,31,0.5), 0 3px 10px rgba(0,0,0,0.5);}
+    50%{box-shadow:0 0 20px rgba(255,90,31,0.9), 0 3px 10px rgba(0,0,0,0.5);}
+  }
+
   /* ---------- LOBBY ---------- */
   .lobby-screen{position:absolute;inset:0;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;}
 
@@ -232,7 +260,6 @@
 
   .empty-state{text-align:center;padding:30px 20px;color:var(--bone-dim);font-size:12px;font-weight:600;}
 
-  /* Landscape iPhone */
   @media (orientation: landscape){
     .topbar-wrap{top:calc(env(safe-area-inset-top) + 6px);right:8px;max-width:55%;}
     .topbar{padding:4px 7px 4px 4px;border-radius:12px;min-height:48px;}
@@ -247,6 +274,9 @@
     .coin-pill{top:calc(env(safe-area-inset-top) + 56px);right:8px;padding:3px 9px;}
     .coin-icon{width:11px;height:11px;}
     .coin-num{font-size:11px;}
+
+    .music-btn{width:34px;height:34px;top:calc(env(safe-area-inset-top) + 6px);left:8px;}
+    .music-btn svg{width:17px;height:17px;}
 
     .player-stage{padding-top:40px;}
     .player-figure{width:100px;}
@@ -288,6 +318,26 @@
 
   <div class="bg-layer" id="bgLayer"></div>
   <div class="bg-embers" id="embers"></div>
+
+  <!-- Música de fondo -->
+  <audio id="lobbyMusic" loop preload="auto">
+    <source src="https://archive.org/download/sangre-en-la-arena-2/sangre_en_la_arena%202.mp3" type="audio/mpeg">
+  </audio>
+
+  <!-- Botón de música -->
+  <button class="music-btn" id="musicBtn" aria-label="Música">
+    <svg class="icon-off" viewBox="0 0 24 24" fill="none">
+      <path d="M9 18V6l10-2v12" stroke="#9C8E7F" stroke-width="1.8" stroke-linejoin="round"/>
+      <circle cx="6.5" cy="18" r="2.5" stroke="#9C8E7F" stroke-width="1.8"/>
+      <circle cx="16.5" cy="16" r="2.5" stroke="#9C8E7F" stroke-width="1.8"/>
+      <path d="M3 3l18 18" stroke="#FF5A1F" stroke-width="2" stroke-linecap="round"/>
+    </svg>
+    <svg class="icon-on" viewBox="0 0 24 24" fill="none">
+      <path d="M9 18V6l10-2v12" stroke="#FFB020" stroke-width="1.8" stroke-linejoin="round"/>
+      <circle cx="6.5" cy="18" r="2.5" stroke="#FFB020" stroke-width="1.8"/>
+      <circle cx="16.5" cy="16" r="2.5" stroke="#FFB020" stroke-width="1.8"/>
+    </svg>
+  </button>
 
   <div class="lobby-screen">
 
@@ -402,6 +452,65 @@
 </div>
 
 <script>
+/* ============ MÚSICA DEL LOBBY ============ */
+const music = document.getElementById('lobbyMusic');
+const musicBtn = document.getElementById('musicBtn');
+let musicStarted = false;
+
+// Volumen suave para que no ensorde
+music.volume = 0.45;
+
+async function tryPlayMusic(){
+  if(musicStarted) return;
+  try{
+    await music.play();
+    musicStarted = true;
+    musicBtn.classList.add('playing');
+    // Guarda la preferencia
+    try{ await window.storage.set('inferno-music-on', 'true', false); }catch(e){}
+  }catch(err){
+    // Autoplay bloqueado: esperamos al primer toque del usuario
+  }
+}
+
+// Intenta autoplay al cargar (a veces funciona en desktop)
+window.addEventListener('load', ()=>{ tryPlayMusic(); });
+
+// Arranca la música al PRIMER toque en cualquier parte (regla de Safari/iOS)
+document.addEventListener('touchstart', tryPlayMusic, {once:true});
+document.addEventListener('click', tryPlayMusic, {once:true});
+
+// Botón de música
+musicBtn.addEventListener('click', async (e)=>{
+  e.stopPropagation();
+  if(music.paused){
+    try{
+      await music.play();
+      musicStarted = true;
+      musicBtn.classList.add('playing');
+      try{ await window.storage.set('inferno-music-on', 'true', false); }catch(err){}
+      showToast('Música activada');
+    }catch(err){
+      showToast('No se pudo reproducir');
+    }
+  }else{
+    music.pause();
+    musicBtn.classList.remove('playing');
+    try{ await window.storage.set('inferno-music-on', 'false', false); }catch(err){}
+    showToast('Música silenciada');
+  }
+});
+
+// Pausa la música cuando la pestaña pierde el foco (ahorra batería en iPhone)
+document.addEventListener('visibilitychange', ()=>{
+  if(document.hidden && !music.paused){
+    music.pause();
+    // No quitamos .playing para que al volver retome sola
+  }else if(!document.hidden && musicStarted && music.paused){
+    music.play().catch(()=>{});
+  }
+});
+
 /* ============ AVATARES ============ */
 const ICONS = [
   { id:'ic_default', name:'Llama Base', price:0,
@@ -426,20 +535,7 @@ const ICONS = [
     svg:`<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="32" fill="#0e1418"/><path d="M18 46V30a14 14 0 0 1 28 0v16l-4-4-4 4-4-4-4 4-4-4-4 4z" fill="#EDE1D3"/><circle cx="26" cy="30" r="3" fill="#0B0908"/><circle cx="38" cy="30" r="3" fill="#0B0908"/><ellipse cx="32" cy="38" rx="3" ry="4" fill="#0B0908"/></svg>` },
 ];
 
-/* ============================================================
-   BANNERS PROCEDURALES DE LLAMAS — SVG con feTurbulence
-   Cada banner es un SVG embebido como data URI.
-   Colores únicos: naranja, azul, morado, amarillo, verde, rosa, blanco.
-   ============================================================ */
-
-/**
- * Genera un SVG de llamas realistas.
- * @param {string} colA - color base de la llama (más intensa)
- * @param {string} colB - color medio
- * @param {string} colC - color de la punta / brillo
- * @param {string} colBg - color de fondo
- * @param {string} colBgTop - color del fondo arriba (humo)
- */
+/* ============ BANNERS PROCEDURALES DE LLAMAS ============ */
 function buildFlameBanner(colA, colB, colC, colBg, colBgTop){
   const svg = `
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 120" preserveAspectRatio="xMidYMid slice">
@@ -456,9 +552,7 @@ function buildFlameBanner(colA, colB, colC, colBg, colBgTop){
       <stop offset="1" stop-color="${colBg}" stop-opacity="0"/>
     </radialGradient>
     <filter id="flameBlur" x="-20%" y="-20%" width="140%" height="140%">
-      <feTurbulence type="fractalNoise" baseFrequency="0.012 0.05" numOctaves="3" seed="3" result="noise">
-        <animate attributeName="baseFrequency" dur="9s" values="0.012 0.05;0.018 0.07;0.012 0.05" repeatCount="indefinite"/>
-      </feTurbulence>
+      <feTurbulence type="fractalNoise" baseFrequency="0.012 0.05" numOctaves="3" seed="3" result="noise"/>
       <feDisplacementMap in="SourceGraphic" in2="noise" scale="22" xChannelSelector="R" yChannelSelector="G"/>
       <feGaussianBlur stdDeviation="1.4"/>
     </filter>
@@ -471,104 +565,52 @@ function buildFlameBanner(colA, colB, colC, colBg, colBgTop){
     </filter>
   </defs>
 
-  <!-- Fondo -->
   <rect width="400" height="120" fill="url(#bg)"/>
-
-  <!-- Resplandor inferior -->
   <ellipse cx="200" cy="120" rx="220" ry="70" fill="url(#glow)"/>
 
-  <!-- Capa 1: llamas grandes al fondo -->
   <g filter="url(#flameBlur)" opacity="0.85">
-    <path d="M-20 120 Q 20 50 60 90 Q 90 30 130 85 Q 170 20 210 80 Q 250 25 290 85 Q 330 35 370 90 Q 400 55 420 120 Z"
-          fill="${colA}"/>
+    <path d="M-20 120 Q 20 50 60 90 Q 90 30 130 85 Q 170 20 210 80 Q 250 25 290 85 Q 330 35 370 90 Q 400 55 420 120 Z" fill="${colA}"/>
   </g>
-
-  <!-- Capa 2: llamas medianas -->
   <g filter="url(#flameBlur)" opacity="0.95">
-    <path d="M-10 120 Q 30 70 70 100 Q 110 55 150 95 Q 190 45 230 95 Q 270 55 310 98 Q 350 65 390 100 Q 410 80 420 120 Z"
-          fill="${colB}"/>
+    <path d="M-10 120 Q 30 70 70 100 Q 110 55 150 95 Q 190 45 230 95 Q 270 55 310 98 Q 350 65 390 100 Q 410 80 420 120 Z" fill="${colB}"/>
   </g>
-
-  <!-- Capa 3: llamas internas brillantes -->
   <g filter="url(#flameBlur)" opacity="1">
-    <path d="M0 120 Q 40 90 80 108 Q 120 80 160 105 Q 200 70 240 105 Q 280 82 320 108 Q 360 90 400 110 L 400 120 Z"
-          fill="${colC}"/>
+    <path d="M0 120 Q 40 90 80 108 Q 120 80 160 105 Q 200 70 240 105 Q 280 82 320 108 Q 360 90 400 110 L 400 120 Z" fill="${colC}"/>
   </g>
-
-  <!-- Humo superior -->
   <g opacity="0.35" filter="url(#softBlur)">
     <ellipse cx="100" cy="20" rx="90" ry="22" fill="#1a1a1a"/>
     <ellipse cx="280" cy="14" rx="110" ry="20" fill="#222"/>
   </g>
-
-  <!-- Chispas / brasas -->
   <g filter="url(#sparkGlow)" fill="${colC}">
-    <circle cx="60" cy="70" r="1.6">
-      <animate attributeName="cy" dur="3s" values="80;20;80" repeatCount="indefinite"/>
-      <animate attributeName="opacity" dur="3s" values="0;1;0" repeatCount="indefinite"/>
-    </circle>
-    <circle cx="140" cy="60" r="1.2">
-      <animate attributeName="cy" dur="4s" values="90;15;90" repeatCount="indefinite"/>
-      <animate attributeName="opacity" dur="4s" values="0;0.9;0" repeatCount="indefinite"/>
-    </circle>
-    <circle cx="220" cy="65" r="1.8">
-      <animate attributeName="cy" dur="3.5s" values="85;10;85" repeatCount="indefinite"/>
-      <animate attributeName="opacity" dur="3.5s" values="0;1;0" repeatCount="indefinite"/>
-    </circle>
-    <circle cx="300" cy="72" r="1.4">
-      <animate attributeName="cy" dur="4.5s" values="95;25;95" repeatCount="indefinite"/>
-      <animate attributeName="opacity" dur="4.5s" values="0;0.85;0" repeatCount="indefinite"/>
-    </circle>
-    <circle cx="360" cy="68" r="1.1">
-      <animate attributeName="cy" dur="3.8s" values="88;18;88" repeatCount="indefinite"/>
-      <animate attributeName="opacity" dur="3.8s" values="0;0.8;0" repeatCount="indefinite"/>
-    </circle>
-    <circle cx="100" cy="80" r="1.3">
-      <animate attributeName="cy" dur="5s" values="100;30;100" repeatCount="indefinite"/>
-      <animate attributeName="opacity" dur="5s" values="0;0.7;0" repeatCount="indefinite"/>
-    </circle>
-    <circle cx="260" cy="78" r="1.5">
-      <animate attributeName="cy" dur="4.2s" values="92;22;92" repeatCount="indefinite"/>
-      <animate attributeName="opacity" dur="4.2s" values="0;0.95;0" repeatCount="indefinite"/>
-    </circle>
+    <circle cx="60" cy="70" r="1.6"><animate attributeName="cy" dur="3s" values="80;20;80" repeatCount="indefinite"/><animate attributeName="opacity" dur="3s" values="0;1;0" repeatCount="indefinite"/></circle>
+    <circle cx="140" cy="60" r="1.2"><animate attributeName="cy" dur="4s" values="90;15;90" repeatCount="indefinite"/><animate attributeName="opacity" dur="4s" values="0;0.9;0" repeatCount="indefinite"/></circle>
+    <circle cx="220" cy="65" r="1.8"><animate attributeName="cy" dur="3.5s" values="85;10;85" repeatCount="indefinite"/><animate attributeName="opacity" dur="3.5s" values="0;1;0" repeatCount="indefinite"/></circle>
+    <circle cx="300" cy="72" r="1.4"><animate attributeName="cy" dur="4.5s" values="95;25;95" repeatCount="indefinite"/><animate attributeName="opacity" dur="4.5s" values="0;0.85;0" repeatCount="indefinite"/></circle>
+    <circle cx="360" cy="68" r="1.1"><animate attributeName="cy" dur="3.8s" values="88;18;88" repeatCount="indefinite"/><animate attributeName="opacity" dur="3.8s" values="0;0.8;0" repeatCount="indefinite"/></circle>
+    <circle cx="100" cy="80" r="1.3"><animate attributeName="cy" dur="5s" values="100;30;100" repeatCount="indefinite"/><animate attributeName="opacity" dur="5s" values="0;0.7;0" repeatCount="indefinite"/></circle>
+    <circle cx="260" cy="78" r="1.5"><animate attributeName="cy" dur="4.2s" values="92;22;92" repeatCount="indefinite"/><animate attributeName="opacity" dur="4.2s" values="0;0.95;0" repeatCount="indefinite"/></circle>
   </g>
 </svg>`;
-  // encodeURIComponent para meterlo como data URI seguro
   return `url("data:image/svg+xml;utf8,${encodeURIComponent(svg)}")`;
 }
 
-/* Banner procedural tipo "gradiente moderno" (para fondos no-fuego) */
-function buildModernBg(grad){
-  return grad;
-}
-
 const BACKGROUNDS = [
-  /* ---------- BANNERS DE LLAMAS REALISTAS ---------- */
   { id:'bg_default', name:'Brasas', price:0,
     css: buildFlameBanner('#FF5A1F','#FFB020','#FFF3A0','#7A1421','#1a0a05') },
-
   { id:'bg_flame_blue', name:'Llamas Azules', price:400,
     css: buildFlameBanner('#1e40af','#3b82f6','#93c5fd','#0c1a4a','#02030a') },
-
   { id:'bg_flame_purple', name:'Llamas Moradas', price:450,
     css: buildFlameBanner('#7c3aed','#a855f7','#e9d5ff','#3b0764','#0a0212') },
-
   { id:'bg_flame_yellow', name:'Llamas Amarillas', price:420,
     css: buildFlameBanner('#f59e0b','#fde047','#fffbeb','#7c2d12','#1a0e02') },
-
   { id:'bg_flame_green', name:'Infierno Verde', price:480,
     css: buildFlameBanner('#22c55e','#4ade80','#dcfce7','#064e3b','#02120a') },
-
   { id:'bg_flame_pink', name:'Llamas Rosas', price:460,
     css: buildFlameBanner('#ec4899','#f472b6','#fce7f3','#831843','#170210') },
-
   { id:'bg_flame_white', name:'Fuego Blanco', price:550,
     css: buildFlameBanner('#f59e0b','#fef3c7','#ffffff','#7c2d12','#0a0503') },
-
   { id:'bg_flame_cyan', name:'Llamas Cian', price:430,
     css: buildFlameBanner('#0e7490','#22d3ee','#cffafe','#083344','#021016') },
-
-  /* ---------- FONDOS MODERNOS (gradientes, sin llamas) ---------- */
   { id:'bg_cyber_neon', name:'Ciudad Neón', price:500,
     css:'linear-gradient(135deg, #0f0c29 0%, #302b63 45%, #ff00cc 100%)' },
   { id:'bg_synthwave', name:'Atardecer Synth', price:520,
@@ -611,7 +653,17 @@ async function loadState(){
       const saved = JSON.parse(res.value);
       state = Object.assign(state, saved);
     }
-  }catch(e){ /* no saved profile yet */ }
+  }catch(e){}
+  // Restaura preferencia de música
+  try{
+    const m = await window.storage.get('inferno-music-on', false);
+    if(m && m.value === 'false'){
+      musicBtn.classList.remove('playing');
+    }else{
+      musicBtn.classList.add('playing');
+    }
+  }catch(e){ musicBtn.classList.add('playing'); }
+
   draftIcon = state.equippedIcon;
   draftBg = state.equippedBg;
   renderAll();
